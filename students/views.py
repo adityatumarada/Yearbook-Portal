@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseBadRequest
 from django.urls import reverse
 from django.contrib.auth.models import User
-from .models import Testimonial, PollAnswer, PollQuestion, ProfileAnswers, ProfileQuestion, Profile
+from .models import Testimonial, PollAnswer, PollQuestion, ProfileAnswers, ProfileQuestion, Profile, Memories
 from django.db.models.functions import Length
 from PIL import Image
 import os
@@ -12,6 +12,7 @@ from yearbook.settings import BASE_DIR, MEDIA_ROOT, POLL_STOP, PORTAL_STOP
 # Create your views here.
 
 profile_pic_upload_folder = os.path.join(MEDIA_ROOT,Profile.profile_pic.field.upload_to)
+memories_image1_upload_folder = os.path.join(MEDIA_ROOT,Memories.image1.field.upload_to)
 
 def votes_sort_key(item):
     return len(item[1])
@@ -226,6 +227,102 @@ def login(request):
             return render(request, 'login.html', context)
     else:
         return error404(request)
+
+
+@login_required
+def memories(request):
+    if request.method == 'GET':
+        user = User.objects.filter(username=request.user.username).first()
+        memories = Memories.objects.filter(user=user).first()
+        errors = [0, 0]
+        if user.is_superuser:
+            return error404(request)
+        context = {
+            'updated': False,
+            'user': user,
+            'memories': memories,
+            'errors': errors,
+            'logged_in': True
+        }
+        return render(request, 'memories.html', context)
+    else:
+        if not PORTAL_STOP:
+            user = User.objects.filter(username=request.user.username).first()
+            memories = Memories.objects.filter(user=user).first()
+            errors = [0, 0]
+            if user.is_superuser:
+                return error404(request)
+            memories.save()
+            context = {
+                'updated': True,
+                'memories': memories,
+                'errors': errors,
+                'logged_in': True
+            }
+            if errors[0] + errors[1] == 0:
+                return render(request, 'models.html', context)
+            else:
+                context['updated'] = False
+                return render(request, 'models.html', context)
+        else:
+            return JsonResponse({'status': 0, 'error': "Sorry, all changes to the portal have been stopped."})
+
+
+@login_required
+def memories_upload_pic(request):
+    if request.method == 'POST':
+        if not PORTAL_STOP:
+            user = User.objects.filter(username=request.user.username).first()
+            memories = Memories.objects.filter(user=user).first()
+            try:
+                x = request.POST.get("x", "")
+                x = float(x)
+            except:
+                return JsonResponse({'status': 0,
+                                     'error': "Wrong crop details\nPlease provide an image which is larger than 500x500\nUse JPEG or PNG format"})
+            try:
+                y = request.POST.get("y", "")
+                y = float(y)
+            except:
+                return JsonResponse({'status': 0,
+                                     'error': "Wrong crop details\nPlease provide an image which is larger than 500x500\nUse JPEG or PNG format"})
+            try:
+                height = request.POST.get("height", "")
+                height = float(height)
+            except:
+                return JsonResponse({'status': 0,
+                                     'error': "Wrong crop details\nPlease provide an image which is larger than 500x500\nUse JPEG or PNG format"})
+            try:
+                width = request.POST.get("width", "")
+                width = float(width)
+            except:
+                return JsonResponse({'status': 0,
+                                     'error': "Wrong crop details\nPlease provide an image which is larger than 500x500\nUse JPEG or PNG format"})
+            if width < 490 or height < 490:
+                return JsonResponse({'status': 0,
+                                     'error': "Wrong image size\nPlease provide an image which is larger than 500x500\nUse JPEG or PNG format"})
+            try:
+                uploaded_pic = request.FILES["image1"]
+                image = Image.open(uploaded_pic)
+                cropped_image = image.crop((x, y, width + x, height + y))
+                resized_image = cropped_image.resize((500, 500), Image.ANTIALIAS)
+            except:
+                return JsonResponse({'status': 0,
+                                     'error': "Error processing image\nPlease provide an image which is larger than 500x500\nUse JPEG or PNG format"})
+            extension = uploaded_pic.name.split('.')[-1]
+            print(extension)
+            memories_image1_path = os.path.join(memories_image1_upload_folder, user.username + '.' + extension.lower())
+            resized_image.save(memories_image1_path)
+            memories.image1 = os.path.join(Memories.image1.field.upload_to,
+                                               user.username + '.' + extension.lower())
+            memories.save()
+            return JsonResponse({'status': 1, 'message': "Image uploaded Successfully"})
+        else:
+            return JsonResponse({'status': 0, 'error': "Sorry, all changes to the portal have been stopped."})
+    else:
+        return error404(request)
+
+
 
 
 @login_required

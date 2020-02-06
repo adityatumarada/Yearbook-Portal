@@ -15,7 +15,7 @@ def create_new_profile(backend, user, response, details, *args, **kwargs):
                 program = rollno[2:4]
                 department = rollno[4:6]
                 graduating = True
-                if year != 2018 and (program == "01" or program == "02"):
+                if year != 2017 and (program == "01" or program == "02"):
                     graduating = False
                 Profile.objects.create(user=user, full_name=response['name'], department=department, program=program,
                                        rollno=int(rollno), graduating=graduating)
