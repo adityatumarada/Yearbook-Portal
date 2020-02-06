@@ -23,6 +23,7 @@ from students import views as student_views
 
 urlpatterns = [
     path('', student_views.home, name='home'),
+    path('polls/', student_views.polls, name='polls'),
     # path('login/', LoginView.as_view(template_name='login.html'), name='login'),
     path('login/', student_views.login, name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),

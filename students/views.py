@@ -492,3 +492,66 @@ def error404(request):
     else:
         return render(request, '404.html')
 
+
+def polls(request):
+    if request.method == 'GET':
+        if request.user and not request.user.is_anonymous:
+            logged_in = True
+        else:
+            logged_in = False
+        if logged_in:
+            user = User.objects.filter(username=request.user.username).first()
+            poll_questions = PollQuestion.objects.all()
+            polls = {}
+            if user.is_superuser:
+                for question in poll_questions:
+                    answers = PollAnswer.objects.filter(question=question)
+                    answers_count = answers.count()
+                    poll_dict = {}
+                    for answer in answers:
+                        if answer.answer in poll_dict.keys():
+                            poll_dict[answer.answer].append(answer.voted_by)
+                        else:
+                            poll_dict[answer.answer] = [answer.voted_by]
+                    polls[(question, answers_count)] = sorted(poll_dict.items(), key=votes_sort_key, reverse=True)
+                context = {
+                    'polls': polls,
+                    'user': user,
+                    'logged_in': logged_in
+                }
+                return render(request, 'admin_home.html', context)
+            else:
+                user_profile = Profile.objects.filter(user=user).first()
+                if not user_profile.graduating:
+                    context = {
+                        'user': user,
+                        'user_profile': user_profile,
+                        'logged_in': logged_in
+                    }
+                    return render(request, 'polls.html', context)
+                else:
+                    testimonials = Testimonial.objects.filter(given_to=user_profile).order_by('-id')
+                    for question in poll_questions:
+                        answers = PollAnswer.objects.filter(question=question)
+                        myanswer = answers.filter(voted_by=user_profile).first()
+                        if myanswer:
+                            myanswer = myanswer.answer
+                        else:
+                            myanswer = None
+                        poll_nominees = []
+                        for answer in answers:
+                            if answer.answer not in poll_nominees:
+                                poll_nominees.append(answer.answer)
+                        polls[(question, myanswer)] = sorted(poll_nominees, key=nominees_sort_key)
+                    context = {
+                        'testimonials': testimonials,
+                        'polls': polls,
+                        'user': user,
+                        'user_profile': user_profile,
+                        'logged_in': logged_in
+                    }
+                    return render(request, 'polls.html', context)
+        else:
+            return HttpResponseRedirect(reverse('login'))
+    else:
+        return error404(request)
