@@ -125,4 +125,4 @@ class Memories(models.Model):
     image1 = models.ImageField(upload_to='jab_ham_fache_the/', default='jab_ham_fache_the/no-profile-pic.png')
 
     def __str__(self):
-        return  self.profile.full_name + "added memories"
+        return self.profile.full_name + "added memories"
