@@ -156,9 +156,14 @@
                                 <div class="card-text">
                                     <h6><b>Webmail</b></h6>
                                     <p><a href="mailto:{{ profile.user.email }}">{{ profile.user.email }}</a></p>
+                                    <h6><b>Alternate Mail</b></h6>
+                                    <p><a href="mailto:{{ profile.alt_email }}">{{ profile.alt_email }}</a></p>
+                                    <h6><b>Alternate Mail</b></h6>
+                                    <p>{{ profile.phone }}</p>
                                     <h6><b>Bio</b></h6>
                                     <p>{{ profile.bio }}</p>
                                 </div>
+
                             </div>
                             {% if myprofile %}
                                 <a class="btn btn-primary" style="border-top-right-radius: 0;border-top-left-radius: 0" href="{% url 'edit_profile' %}">Edit Profile</a>

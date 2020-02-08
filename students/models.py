@@ -69,7 +69,8 @@ class Profile(models.Model):
     rollno = models.IntegerField()
     program = models.CharField(max_length=2, choices=program_values)
     department = models.CharField(max_length=3, choices=department_values)
-    # phone no , alt email id
+    phone = models.IntegerField(default=000000000)
+    alt_email = models.EmailField(max_length=300, default="not_found@gmail.com")
     bio = models.TextField(max_length=1000)
     graduating = models.BooleanField(default=False)
 
