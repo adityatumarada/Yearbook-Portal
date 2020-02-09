@@ -1,4 +1,4 @@
-from .models import Profile
+from .models import Profile, Memories
 
 
 def generate_username(backend, response, details, *args, **kwargs):
@@ -19,6 +19,9 @@ def create_new_profile(backend, user, response, details, *args, **kwargs):
                     graduating = False
                 Profile.objects.create(user=user, full_name=response['name'], department=department, program=program,
                                        rollno=int(rollno), graduating=graduating)
+                profile_user = Profile.objects.filter(user=user).first()
+                Memories.objects.create(profile=profile_user)
             else:
                 Profile.objects.create(user=user, full_name=response['name'], department='00', program='00',
                                        rollno=000000000, graduating=False)
+

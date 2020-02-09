@@ -121,8 +121,8 @@ class ProfileAnswers(models.Model):
 
 
 class Memories(models.Model):
-    image_user = models.ForeignKey(Profile, null=True, on_delete=models.CASCADE)
-    image1 = models.ImageField(upload_to='jab_ham_fache_the/', default='jab_ham_fache_the/no-profile-pic.png')
+    profile = models.ForeignKey(Profile, null=True, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to='memories_image1/', default='memories_image1/no-profile-pic.png')
 
     def __str__(self):
-        return self.profile.full_name + "added memories"
+        return self.profile.full_name

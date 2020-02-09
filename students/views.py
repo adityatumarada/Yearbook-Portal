@@ -11,8 +11,9 @@ from yearbook.settings import BASE_DIR, MEDIA_ROOT, POLL_STOP, PORTAL_STOP
 
 # Create your views here.
 
-profile_pic_upload_folder = os.path.join(MEDIA_ROOT,Profile.profile_pic.field.upload_to)
-memories_image1_upload_folder = os.path.join(MEDIA_ROOT,Memories.image1.field.upload_to)
+profile_pic_upload_folder = os.path.join(MEDIA_ROOT, Profile.profile_pic.field.upload_to)
+memories_image1_upload_folder = os.path.join(MEDIA_ROOT, Memories.image.field.upload_to)
+
 
 def votes_sort_key(item):
     return len(item[1])
@@ -109,11 +110,13 @@ def profile(request, username):
                     }
                     return render(request, 'profile.html', context)
                 else:
-                    testimonials = Testimonial.objects.filter(given_to=profile).order_by('-favourite',Length('content').desc(),'-id')
-                    profile_questions =ProfileQuestion.objects.all()
+                    testimonials = Testimonial.objects.filter(given_to=profile).order_by('-favourite',
+                                                                                         Length('content').desc(),
+                                                                                         '-id')
+                    profile_questions = ProfileQuestion.objects.all()
                     profile_answers = ProfileAnswers.objects.filter(profile=profile)
                     mytestimonial = testimonials.filter(given_by=user_profile).first()
-                    answers={}
+                    answers = {}
                     for question in profile_questions:
                         answers[question] = profile_answers.filter(question=question).first()
                     context = {
@@ -164,23 +167,23 @@ def search(request):
     if request.method == 'GET':
         if request.user and not request.user.is_anonymous:
             user = User.objects.filter(username=request.user.username).first()
-            key = request.GET.get("key","")
+            key = request.GET.get("key", "")
             json = request.GET.get("json", "")
-            if key and key!="":
+            if key and key != "":
                 profiles = Profile.objects.filter(user__first_name__contains=key.upper(), graduating=True)
             else:
-                if json!="1":
+                if json != "1":
                     return HttpResponseRedirect(reverse('home'))
                 else:
                     return JsonResponse([], safe=False)
             profile_values = []
             page_profiles = profiles.exclude(user=user)
             more_profiles = False
-            if page_profiles.count()>20:
+            if page_profiles.count() > 20:
                 more_profiles = True
-            if json=="1":
+            if json == "1":
                 for profile in profiles[:10]:
-                    profile_values.append({'username':profile.user.username, 'name': profile.full_name})
+                    profile_values.append({'username': profile.user.username, 'name': profile.full_name})
                 return JsonResponse(profile_values, safe=False)
             else:
                 context = {
@@ -219,7 +222,7 @@ def login(request):
             }
             return render(request, 'login.html', context)
         else:
-            next = request.GET.get('next',"/")
+            next = request.GET.get('next', "/")
             context = {
                 'logged_in': False,
                 'next': next
@@ -230,50 +233,60 @@ def login(request):
 
 
 @login_required
-def memories(request):
+def edit_profile(request):
     if request.method == 'GET':
         user = User.objects.filter(username=request.user.username).first()
-        memories = Memories.objects.filter(user=user).first()
+        profile = Profile.objects.filter(user=user).first()
         errors = [0, 0]
         if user.is_superuser:
             return error404(request)
         context = {
             'updated': False,
             'user': user,
-            'memories': memories,
+            'profile': profile,
             'errors': errors,
             'logged_in': True
         }
-        return render(request, 'memories.html', context)
+        return render(request, 'editprofile.html', context)
     else:
         if not PORTAL_STOP:
             user = User.objects.filter(username=request.user.username).first()
-            memories = Memories.objects.filter(user=user).first()
+            profile = Profile.objects.filter(user=user).first()
+            new_name = request.POST.get("name", "")
             errors = [0, 0]
             if user.is_superuser:
                 return error404(request)
-            memories.save()
+            if len(new_name) < 50 and new_name != "":
+                profile.full_name = new_name
+            else:
+                errors[0] = 1
+            new_bio = request.POST.get("bio", "")
+            if len(new_bio) < 500:
+                profile.bio = new_bio
+            else:
+                errors[1] = 1
+            profile.save()
             context = {
                 'updated': True,
-                'memories': memories,
+                'profile': profile,
                 'errors': errors,
                 'logged_in': True
             }
             if errors[0] + errors[1] == 0:
-                return render(request, 'models.html', context)
+                return render(request, 'editprofile.html', context)
             else:
                 context['updated'] = False
-                return render(request, 'models.html', context)
+                return render(request, 'editprofile.html', context)
         else:
             return JsonResponse({'status': 0, 'error': "Sorry, all changes to the portal have been stopped."})
 
 
 @login_required
-def memories_upload_pic(request):
+def upload_profile_pic(request):
     if request.method == 'POST':
         if not PORTAL_STOP:
             user = User.objects.filter(username=request.user.username).first()
-            memories = Memories.objects.filter(user=user).first()
+            profile = Profile.objects.filter(user=user).first()
             try:
                 x = request.POST.get("x", "")
                 x = float(x)
@@ -302,7 +315,7 @@ def memories_upload_pic(request):
                 return JsonResponse({'status': 0,
                                      'error': "Wrong image size\nPlease provide an image which is larger than 500x500\nUse JPEG or PNG format"})
             try:
-                uploaded_pic = request.FILES["image1"]
+                uploaded_pic = request.FILES["profile_pic"]
                 image = Image.open(uploaded_pic)
                 cropped_image = image.crop((x, y, width + x, height + y))
                 resized_image = cropped_image.resize((500, 500), Image.ANTIALIAS)
@@ -311,109 +324,108 @@ def memories_upload_pic(request):
                                      'error': "Error processing image\nPlease provide an image which is larger than 500x500\nUse JPEG or PNG format"})
             extension = uploaded_pic.name.split('.')[-1]
             print(extension)
-            memories_image1_path = os.path.join(memories_image1_upload_folder, user.username + '.' + extension.lower())
-            resized_image.save(memories_image1_path)
-            memories.image1 = os.path.join(Memories.image1.field.upload_to,
+            profile_pic_path = os.path.join(profile_pic_upload_folder, user.username + '.' + extension.lower())
+            resized_image.save(profile_pic_path)
+            profile.profile_pic = os.path.join(Profile.profile_pic.field.upload_to,
                                                user.username + '.' + extension.lower())
-            memories.save()
-            return JsonResponse({'status': 1, 'message': "Image uploaded Successfully"})
+            profile.save()
+            return JsonResponse({'status': 1, 'message': "Profile Pic Changed Successfully"})
         else:
             return JsonResponse({'status': 0, 'error': "Sorry, all changes to the portal have been stopped."})
     else:
         return error404(request)
 
 
-
-
 @login_required
-def edit_profile(request):
+def memories(request):
     if request.method == 'GET':
         user = User.objects.filter(username=request.user.username).first()
-        profile = Profile.objects.filter(user=user).first()
-        errors = [0,0]
+        user_profile = Profile.objects.filter(user=user).first()
+        memories = Memories.objects.filter(profile=user_profile).first()
+        print(memories)
+        errors = [0, 0]
         if user.is_superuser:
             return error404(request)
         context = {
             'updated': False,
-            'user': user,
-            'profile': profile,
+            'profile': user_profile,
+            'memories': memories,
             'errors': errors,
             'logged_in': True
         }
-        return render(request, 'editprofile.html', context)
+        return render(request, 'memories.html', context)
     else:
         if not PORTAL_STOP:
             user = User.objects.filter(username=request.user.username).first()
-            profile = Profile.objects.filter(user=user).first()
-            new_name = request.POST.get("name","")
-            errors = [0,0]
+            user_profile = Profile.objects.filter(user=user).first()
+            memories = Memories.objects.filter(profile=user_profile).first()
+            errors = [0, 0]
             if user.is_superuser:
                 return error404(request)
-            if len(new_name)<50 and new_name!="":
-                profile.full_name = new_name
-            else:
-                errors[0] = 1
-            new_bio = request.POST.get("bio","")
-            if len(new_bio)<500:
-                profile.bio = new_bio
-            else:
-                errors[1] = 1
-            profile.save()
+            memories.save()
             context = {
                 'updated': True,
-                'profile': profile,
+                'memories': memories,
                 'errors': errors,
                 'logged_in': True
             }
-            if errors[0]+errors[1] == 0:
-                return render(request,'editprofile.html', context)
+            if errors[0] + errors[1] == 0:
+                return render(request, 'memories.html', context)
             else:
-                context['updated']=False
-                return render(request,'editprofile.html', context)
+                context['updated'] = False
+                return render(request, 'memories.html', context)
         else:
             return JsonResponse({'status': 0, 'error': "Sorry, all changes to the portal have been stopped."})
 
+
 @login_required
-def upload_profile_pic(request):
+def memories_upload_pic(request):
     if request.method == 'POST':
         if not PORTAL_STOP:
             user = User.objects.filter(username=request.user.username).first()
-            profile = Profile.objects.filter(user=user).first()
+            user_profile = Profile.objects.filter(user=user).first()
+            memories = Memories.objects.filter(user=user_profile)
             try:
-                x = request.POST.get("x","")
+                x = request.POST.get("x", "")
                 x = float(x)
             except:
-                return JsonResponse({'status': 0, 'error': "Wrong crop details\nPlease provide an image which is larger than 500x500\nUse JPEG or PNG format"})
+                return JsonResponse({'status': 0,
+                                     'error': "Wrong crop details\nPlease provide an image which is larger than 500x500\nUse JPEG or PNG format"})
             try:
-                y = request.POST.get("y","")
+                y = request.POST.get("y", "")
                 y = float(y)
             except:
-                return JsonResponse({'status': 0, 'error': "Wrong crop details\nPlease provide an image which is larger than 500x500\nUse JPEG or PNG format"})
+                return JsonResponse({'status': 0,
+                                     'error': "Wrong crop details\nPlease provide an image which is larger than 500x500\nUse JPEG or PNG format"})
             try:
-                height = request.POST.get("height","")
+                height = request.POST.get("height", "")
                 height = float(height)
             except:
-                return JsonResponse({'status': 0, 'error': "Wrong crop details\nPlease provide an image which is larger than 500x500\nUse JPEG or PNG format"})
+                return JsonResponse({'status': 0,
+                                     'error': "Wrong crop details\nPlease provide an image which is larger than 500x500\nUse JPEG or PNG format"})
             try:
-                width = request.POST.get("width","")
+                width = request.POST.get("width", "")
                 width = float(width)
             except:
-                return JsonResponse({'status': 0, 'error': "Wrong crop details\nPlease provide an image which is larger than 500x500\nUse JPEG or PNG format"})
-            if width<490 or height<490:
-                return JsonResponse({'status': 0, 'error': "Wrong image size\nPlease provide an image which is larger than 500x500\nUse JPEG or PNG format"})
+                return JsonResponse({'status': 0,
+                                     'error': "Wrong crop details\nPlease provide an image which is larger than 500x500\nUse JPEG or PNG format"})
+            if width < 490 or height < 490:
+                return JsonResponse({'status': 0,
+                                     'error': "Wrong image size\nPlease provide an image which is larger than 500x500\nUse JPEG or PNG format"})
             try:
                 uploaded_pic = request.FILES["profile_pic"]
                 image = Image.open(uploaded_pic)
                 cropped_image = image.crop((x, y, width + x, height + y))
                 resized_image = cropped_image.resize((500, 500), Image.ANTIALIAS)
             except:
-                return JsonResponse({'status': 0, 'error': "Error processing image\nPlease provide an image which is larger than 500x500\nUse JPEG or PNG format"})
+                return JsonResponse({'status': 0,
+                                     'error': "Error processing image\nPlease provide an image which is larger than 500x500\nUse JPEG or PNG format"})
             extension = uploaded_pic.name.split('.')[-1]
             print(extension)
-            profile_pic_path = os.path.join(profile_pic_upload_folder,user.username+'.'+extension.lower())
+            profile_pic_path = os.path.join(memories_image1_upload_folder, user.username + '.' + extension.lower())
             resized_image.save(profile_pic_path)
-            profile.profile_pic = os.path.join(Profile.profile_pic.field.upload_to, user.username+'.'+extension.lower())
-            profile.save()
+            memories.image = os.path.join(Memories.image.field.upload_to, user.username + '.' + extension.lower())
+            memories.save()
             return JsonResponse({'status': 1, 'message': "Profile Pic Changed Successfully"})
         else:
             return JsonResponse({'status': 0, 'error': "Sorry, all changes to the portal have been stopped."})
@@ -435,21 +447,24 @@ def add_testimonial(request, username):
                     return JsonResponse({'status': 0, 'error': "You can't write a testimonial for yourself"})
                 given_to_profile = Profile.objects.filter(user=given_to).first()
                 if not given_to_profile.graduating:
-                    return JsonResponse({'status': 0, 'error': "You can't write a testimonial for non-graduating batch"})
-                content = request.POST.get("content","")
-                if len(content)<500 and content!="":
-                    old_testimonial = Testimonial.objects.filter(given_to=given_to_profile, given_by=given_by_profile).first()
+                    return JsonResponse(
+                        {'status': 0, 'error': "You can't write a testimonial for non-graduating batch"})
+                content = request.POST.get("content", "")
+                if len(content) < 500 and content != "":
+                    old_testimonial = Testimonial.objects.filter(given_to=given_to_profile,
+                                                                 given_by=given_by_profile).first()
                     if old_testimonial:
                         old_testimonial.content = content
                         old_testimonial.save()
-                        return JsonResponse({'status': 1, 'message':"edited"})
+                        return JsonResponse({'status': 1, 'message': "edited"})
                     else:
-                        Testimonial.objects.create(given_to=given_to_profile, given_by=given_by_profile, content=content)
-                        return JsonResponse({'status':1, 'message':"added"})
+                        Testimonial.objects.create(given_to=given_to_profile, given_by=given_by_profile,
+                                                   content=content)
+                        return JsonResponse({'status': 1, 'message': "added"})
                 else:
-                    return JsonResponse({'status':0, 'error':"Testimonial content size out of bounds"})
+                    return JsonResponse({'status': 0, 'error': "Testimonial content size out of bounds"})
             else:
-                return JsonResponse({'status':0, 'error':"User doesn't exist"})
+                return JsonResponse({'status': 0, 'error': "User doesn't exist"})
         else:
             return JsonResponse({'status': 0, 'error': "Sorry, all changes to the portal have been stopped."})
 
@@ -461,12 +476,12 @@ def delete_testimonial(request):
     else:
         if not PORTAL_STOP:
             user = User.objects.filter(username=request.user.username).first()
-            testimonial_id = request.POST.get("testimonial_id","-1")
+            testimonial_id = request.POST.get("testimonial_id", "-1")
             if not testimonial_id.isdecimal():
                 return JsonResponse({'status': 0, 'error': "Testimonial doesn't exist"})
             testimonial = Testimonial.objects.filter(id=int(testimonial_id)).first()
             if testimonial:
-                if user==testimonial.given_to.user or user==testimonial.given_by.user:
+                if user == testimonial.given_to.user or user == testimonial.given_by.user:
                     testimonial.delete()
                     return JsonResponse({'status': 1, 'message': "Testimonial deleted successfully"})
                 else:
@@ -476,6 +491,7 @@ def delete_testimonial(request):
         else:
             return JsonResponse({'status': 0, 'error': "Sorry, all changes to the portal have been stopped."})
 
+
 @login_required
 def favourite_testimonial(request):
     if request.method == 'GET':
@@ -484,18 +500,18 @@ def favourite_testimonial(request):
         if not PORTAL_STOP:
             user = User.objects.filter(username=request.user.username).first()
             user_profile = Profile.objects.filter(user=user).first()
-            testimonial_id = request.POST.get("testimonial_id","-1")
+            testimonial_id = request.POST.get("testimonial_id", "-1")
             if not testimonial_id.isdecimal():
                 return JsonResponse({'status': 0, 'error': "Testimonial doesn't exist"})
             testimonial = Testimonial.objects.filter(id=int(testimonial_id)).first()
             if testimonial:
-                if user==testimonial.given_to.user:
+                if user == testimonial.given_to.user:
                     if testimonial.favourite:
                         testimonial.favourite = False
                         testimonial.save()
                         return JsonResponse({'status': 1, 'message': "Testimonial removed from favourites"})
                     else:
-                        if Testimonial.objects.filter(given_to=user_profile, favourite=True).count()<4:
+                        if Testimonial.objects.filter(given_to=user_profile, favourite=True).count() < 4:
                             testimonial.favourite = True
                             testimonial.save()
                             return JsonResponse({'status': 1, 'message': "Testimonial added to favourites"})
@@ -508,15 +524,16 @@ def favourite_testimonial(request):
         else:
             return JsonResponse({'status': 0, 'error': "Sorry, all changes to the portal have been stopped."})
 
+
 @login_required
-def change_answer(request,username):
+def change_answer(request, username):
     if request.method == 'GET':
         return error404(request)
     else:
         if not PORTAL_STOP:
             user = User.objects.filter(username=request.user.username).first()
             profile_user = User.objects.filter(username=username).first()
-            if user==profile_user:
+            if user == profile_user:
                 question_id = request.POST.get("question_id", "-1")
                 profile = Profile.objects.filter(user=user).first()
                 if not profile.graduating:
@@ -533,7 +550,7 @@ def change_answer(request,username):
                         if answer:
                             answer.answer = new_answer
                             answer.save()
-                            return JsonResponse({'status': 1, 'message':"edited"})
+                            return JsonResponse({'status': 1, 'message': "edited"})
                         else:
                             ProfileAnswers.objects.create(question=question, profile=profile, answer=new_answer)
                             return JsonResponse({'status': 1, 'message': "added"})
@@ -546,6 +563,7 @@ def change_answer(request,username):
         else:
             return JsonResponse({'status': 0, 'error': "Sorry, all changes to the portal have been stopped."})
 
+
 @login_required
 def add_vote(request):
     if request.method == 'GET':
@@ -556,9 +574,9 @@ def add_vote(request):
             user_profile = Profile.objects.filter(user=user).first()
             if not user_profile.graduating:
                 return JsonResponse({'status': 0, 'error': "Non-graduating batch can't vote for polls"})
-            vote_username = request.POST.get('voting_to',"")
+            vote_username = request.POST.get('voting_to', "")
             vote_user = User.objects.filter(username=vote_username).first()
-            question_id = request.POST.get('question_id',"-1")
+            question_id = request.POST.get('question_id', "-1")
             if not question_id.isdecimal():
                 return JsonResponse({"status": 0, "error": "Poll doesn't exist"})
             poll_question = PollQuestion.objects.filter(id=int(question_id)).first()
@@ -572,7 +590,8 @@ def add_vote(request):
                 poll_answer.save()
                 return HttpResponseRedirect(reverse('home'))
             else:
-                PollAnswer.objects.create(voted_by=user_profile, question=poll_question, answer=Profile.objects.filter(user=vote_user).first())
+                PollAnswer.objects.create(voted_by=user_profile, question=poll_question,
+                                          answer=Profile.objects.filter(user=vote_user).first())
                 return HttpResponseRedirect(reverse('home'))
         else:
             return JsonResponse({'status': 0, 'error': "Sorry, the polls have been freezed."})

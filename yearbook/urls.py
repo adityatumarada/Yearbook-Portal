@@ -22,20 +22,23 @@ from social_django import urls as social_django_urls
 from students import views as student_views
 
 urlpatterns = [
-    path('', student_views.home, name='home'),
-    path('polls/', student_views.polls, name='polls'),
-    # path('login/', LoginView.as_view(template_name='login.html'), name='login'),
-    path('login/', student_views.login, name='login'),
-    path('logout/', LogoutView.as_view(), name='logout'),
-    path('admin/', admin.site.urls),
-    path('oauth/', include(social_django_urls, namespace='social')),
-    path('search/', student_views.search, name='search'),
-    path('add_vote/',student_views.add_vote, name='add_vote'),
-    path('delete_testimonial/',student_views.delete_testimonial, name='delete_testimonial'),
-    path('favourite_testimonial/',student_views.favourite_testimonial, name='favourite_testimonial'),
-    path('edit_profile/', student_views.edit_profile, name='edit_profile'),
-    path('upload_profile_pic/', student_views.upload_profile_pic, name='upload_profile_pic'),
-    path('<username>/', student_views.profile, name='profile'),
-    path('<username>/add_testimonial/', student_views.add_testimonial, name='add_testimonial'),
-    path('<username>/change_answer/', student_views.change_answer, name='change_answer')
-]+static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)+static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+                  path('', student_views.home, name='home'),
+                  path('polls/', student_views.polls, name='polls'),
+                  # path('login/', LoginView.as_view(template_name='login.html'), name='login'),
+                  path('login/', student_views.login, name='login'),
+                  path('logout/', LogoutView.as_view(), name='logout'),
+                  path('admin/', admin.site.urls),
+                  path('oauth/', include(social_django_urls, namespace='social')),
+                  path('search/', student_views.search, name='search'),
+                  path('add_vote/', student_views.add_vote, name='add_vote'),
+                  path('delete_testimonial/', student_views.delete_testimonial, name='delete_testimonial'),
+                  path('favourite_testimonial/', student_views.favourite_testimonial, name='favourite_testimonial'),
+                  path('edit_profile/', student_views.edit_profile, name='edit_profile'),
+                  path('upload_profile_pic/', student_views.upload_profile_pic, name='upload_profile_pic'),
+                  path('memories/', student_views.memories, name='memories'),
+                  path('memories_upload_pic/', student_views.memories_upload_pic, name='memories_upload_pic'),
+                  path('<username>/', student_views.profile, name='profile'),
+                  path('<username>/add_testimonial/', student_views.add_testimonial, name='add_testimonial'),
+                  path('<username>/change_answer/', student_views.change_answer, name='change_answer')
+              ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL,
+                                                                                           document_root=settings.MEDIA_ROOT)
