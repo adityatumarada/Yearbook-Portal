@@ -28,6 +28,7 @@
 </head>
 <body class="d-flex flex-column h-100" style="font-family: 'Nunito', sans-serif;">
     {% if logged_in %}
+
         <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light py-0">
             <a class="navbar-brand" href="{% url 'home' %}" style="font-size:x-large">
                 <img height="40" src="{% static 'img/sail_logo.png' %}"> SAIL Yearbook
@@ -96,7 +97,6 @@
     </main>
     <footer class="footer mt-auto py-1" style="background-color: #f5f5f5;">
         <div class="container-fluid">
-            <span class="text-muted float-left">Developed by <a href="https://www.facebook.com/codingclubiitg/" class="d-inline-block pl-0 text-black-50"><img src="{% static 'img/cc_logo.png' %}" height="40">Coding Club, IIT Guwahati</a></span>
             <span class="text-muted float-right">Presented by <a href="http://iitg.ac.in/sail/index.html" class="d-inline-block pl-0 text-black-50"><img src="{% static 'img/sail_logo.png' %}" height="40">Student Alumni Interaction Linkage (SAIL)</a></span>
         </div>
     </footer>

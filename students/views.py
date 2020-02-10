@@ -273,7 +273,7 @@ def edit_profile(request):
                 'logged_in': True
             }
             if errors[0] + errors[1] == 0:
-                return render(request, 'editprofile.html', context)
+                return render(request, 'profile.html', context)
             else:
                 context['updated'] = False
                 return render(request, 'editprofile.html', context)
@@ -342,7 +342,6 @@ def memories(request):
         user = User.objects.filter(username=request.user.username).first()
         user_profile = Profile.objects.filter(user=user).first()
         memories = Memories.objects.filter(profile=user_profile).first()
-        print(memories)
         errors = [0, 0]
         if user.is_superuser:
             return error404(request)
@@ -384,7 +383,7 @@ def memories_upload_pic(request):
         if not PORTAL_STOP:
             user = User.objects.filter(username=request.user.username).first()
             user_profile = Profile.objects.filter(user=user).first()
-            memories = Memories.objects.filter(user=user_profile)
+            memories = Memories.objects.filter(profile=user_profile).first()
             try:
                 x = request.POST.get("x", "")
                 x = float(x)
