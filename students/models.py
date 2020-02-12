@@ -66,6 +66,7 @@ class Profile(models.Model):
     profile_pic = models.ImageField(upload_to='profile_pics/', default='profile_pics/no-profile-pic.png')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     full_name = models.CharField(max_length=100)
+    private = models.BooleanField(default=False)
     rollno = models.IntegerField()
     program = models.CharField(max_length=2, choices=program_values)
     department = models.CharField(max_length=3, choices=department_values)

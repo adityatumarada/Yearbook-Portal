@@ -101,6 +101,10 @@ def profile(request, username):
                 else:
                     myprofile = False
                 profile = Profile.objects.filter(user=profile_user).first()
+                if profile.private:
+                    private = True
+                else:
+                    private = False
                 if not profile.graduating:
                     context = {
                         'logged_in': True,
@@ -110,25 +114,71 @@ def profile(request, username):
                     }
                     return render(request, 'profile.html', context)
                 else:
-                    testimonials = Testimonial.objects.filter(given_to=profile).order_by('-favourite',
-                                                                                         Length('content').desc(),
-                                                                                         '-id')
-                    profile_questions = ProfileQuestion.objects.all()
-                    profile_answers = ProfileAnswers.objects.filter(profile=profile)
-                    mytestimonial = testimonials.filter(given_by=user_profile).first()
-                    answers = {}
-                    for question in profile_questions:
-                        answers[question] = profile_answers.filter(question=question).first()
-                    context = {
-                        'logged_in': True,
-                        'myprofile': myprofile,
-                        'user': user,
-                        'testimonials': testimonials,
-                        'mytestimonial': mytestimonial,
-                        'profile': profile,
-                        'answers': answers
-                    }
-                    return render(request, 'profile.html', context)
+                    if myprofile:
+                        testimonials = Testimonial.objects.filter(given_to=profile).order_by('-favourite',
+                                                                                             Length('content').desc(),
+                                                                                             '-id')
+                        profile_questions = ProfileQuestion.objects.all()
+                        profile_answers = ProfileAnswers.objects.filter(profile=profile)
+                        answers = {}
+                        for question in profile_questions:
+                            answers[question] = profile_answers.filter(question=question).first()
+                        context = {
+                            'logged_in': True,
+                            'myprofile': myprofile,
+                            'user': user,
+                            'testimonials': testimonials,
+                            'profile': profile,
+                            'answers': answers
+                        }
+                        return render(request, 'profile.html', context)
+                    else:
+                        if private:
+                            testimonials = Testimonial.objects.filter(given_to=profile).order_by('-favourite',
+                                                                                                 Length(
+                                                                                                     'content').desc(),
+                                                                                                 '-id')
+                            profile_questions = ProfileQuestion.objects.all()
+                            profile_answers = ProfileAnswers.objects.filter(profile=profile)
+                            mytestimonial = testimonials.filter(given_by=user_profile).first()
+                            temp = Testimonial.objects.filter(given_to=profile).filter(given_by=user_profile)
+                            answers = {}
+                            for question in profile_questions:
+                                answers[question] = profile_answers.filter(question=question).first()
+                            context = {
+                                'logged_in': True,
+                                'myprofile': myprofile,
+                                'user': user,
+                                'private': private,
+                                'testimonials': temp,
+                                'mytestimonial': mytestimonial,
+                                'profile': profile,
+                                'answers': answers
+                            }
+                            return render(request, 'profile.html', context)
+                        else:
+                            testimonials = Testimonial.objects.filter(given_to=profile).order_by('-favourite',
+                                                                                                 Length(
+                                                                                                     'content').desc(),
+                                                                                                 '-id')
+                            profile_questions = ProfileQuestion.objects.all()
+                            profile_answers = ProfileAnswers.objects.filter(profile=profile)
+                            mytestimonial = testimonials.filter(given_by=user_profile).first()
+                            answers = {}
+                            for question in profile_questions:
+                                answers[question] = profile_answers.filter(question=question).first()
+                            context = {
+                                'logged_in': True,
+                                'myprofile': myprofile,
+                                'user': user,
+                                'private': private,
+                                'testimonials': testimonials,
+                                'mytestimonial': mytestimonial,
+                                'profile': profile,
+                                'answers': answers
+                            }
+                            return render(request, 'profile.html', context)
+
             else:
                 return error404(request)
         else:
@@ -253,6 +303,7 @@ def edit_profile(request):
             user = User.objects.filter(username=request.user.username).first()
             profile = Profile.objects.filter(user=user).first()
             new_name = request.POST.get("name", "")
+            profile.private = request.POST.get("private", "")
             errors = [0, 0]
             if user.is_superuser:
                 return error404(request)
@@ -587,11 +638,11 @@ def add_vote(request):
             if poll_answer:
                 poll_answer.answer = Profile.objects.filter(user=vote_user).first()
                 poll_answer.save()
-                return HttpResponseRedirect(reverse('home'))
+                return HttpResponseRedirect(reverse('polls'))
             else:
                 PollAnswer.objects.create(voted_by=user_profile, question=poll_question,
                                           answer=Profile.objects.filter(user=vote_user).first())
-                return HttpResponseRedirect(reverse('home'))
+                return HttpResponseRedirect(reverse('polls'))
         else:
             return JsonResponse({'status': 0, 'error': "Sorry, the polls have been freezed."})
 

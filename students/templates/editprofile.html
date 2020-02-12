@@ -137,6 +137,7 @@
                                 <label for="yearbook-bio">Bio</label>
                                 <textarea class="form-control {% if errors.1 %}is-invalid{% endif %}" id="yearbook-bio" rows="5" placeholder="Enter you Bio" name="bio" autocomplete="off">{{ profile.bio }}</textarea>
                                 <div class="invalid-feedback">Length of Bio out of bounds</div>
+
                                 {% csrf_token %}
                                 <br>
                                 <button class="btn btn-primary" style="width:100%" type="submit">Save Changes</button>
