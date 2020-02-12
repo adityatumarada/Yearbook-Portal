@@ -134,13 +134,16 @@
                                 <input class="form-control {% if errors.0 %}is-invalid{% endif %}" id="yearbook-name" placeholder="Name as you want in the Yearbook" name="name" value="{{ profile.full_name }}" autocomplete="off">
                                 <div class="invalid-feedback">Length of Name out of bounds</div>
                                 <br>
+                                <label for="yearbook-private">Enable this to Hide your testimonials from Everyone Else</label>
+                                <input class="form-control" id="yearbook-private" type="checkbox" name="private" {% if profile.private %}checked{% else %}{% endif %}>
+                                <br>
                                 <label for="yearbook-phone">Contact Number</label>
                                 <input class="form-control {% if errors.1 %}is-invalid{% endif %}" id="yearbook-phone" placeholder="Permanent Phone Number" name="phone" value="{{ profile.phone }}" autocomplete="off">
                                 <div class="invalid-feedback">Enter Valid Phone Number</div>
                                 <br>
                                 <label for="yearbook-mail">Alternate Mail ID</label>
                                 <input class="form-control {% if errors.2 %}is-invalid{% endif %}" id="yearbook-mail" placeholder="Email ID other than IITG Mail ID" name="email" value="{{ profile.alt_email }}" autocomplete="off">
-                                <div class="invalid-feedback">Enter Vaid Mail ID</div>
+                                <div class="invalid-feedback">Enter Valid Mail ID</div>
                                 <br>
                                 <label for="yearbook-bio">Bio</label>
                                 <textarea class="form-control {% if errors.3 %}is-invalid{% endif %}" id="yearbook-bio" rows="5" placeholder="Enter you Bio" name="bio" autocomplete="off">{{ profile.bio }}</textarea>

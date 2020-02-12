@@ -303,19 +303,36 @@ def edit_profile(request):
             user = User.objects.filter(username=request.user.username).first()
             profile = Profile.objects.filter(user=user).first()
             new_name = request.POST.get("name", "")
-            profile.private = request.POST.get("private", "")
-            errors = [0, 0]
+            priv = request.POST.get("private", "")
+            print(priv)
+            if(priv=='on'):
+                profile.private=True
+            else:
+                profile.private=False
+            errors = [0, 0, 0, 0]
             if user.is_superuser:
                 return error404(request)
             if len(new_name) < 50 and new_name != "":
                 profile.full_name = new_name
             else:
                 errors[0] = 1
+            new_phone = request.POST.get("phone", "")
+            if new_phone.isnumeric() and len(new_phone)>=10:
+                profile.phone=new_phone
+            else:
+                errors[1] = 1
+            new_alt_mail = request.POST.get("email", "")
+            import re
+            regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
+            if (re.search(regex, new_alt_mail)):
+                profile.alt_email=new_alt_mail
+            else:
+                errors[2] = 1
             new_bio = request.POST.get("bio", "")
             if len(new_bio) < 500:
                 profile.bio = new_bio
             else:
-                errors[1] = 1
+                errors[3] = 1
             profile.save()
             context = {
                 'updated': True,
