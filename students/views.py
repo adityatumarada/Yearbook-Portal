@@ -7,6 +7,7 @@ from .models import Testimonial, PollAnswer, PollQuestion, ProfileAnswers, Profi
 from django.db.models.functions import Length
 from PIL import Image
 import os
+import re
 from yearbook.settings import BASE_DIR, MEDIA_ROOT, POLL_STOP, PORTAL_STOP
 
 # Create your views here.
@@ -23,6 +24,7 @@ def nominees_sort_key(item):
     return item.full_name
 
 
+@login_required
 def home(request):
     if request.method == 'GET':
         if request.user and not request.user.is_anonymous:
@@ -87,6 +89,7 @@ def home(request):
         return error404(request)
 
 
+@login_required
 def profile(request, username):
     if request.method == 'GET':
         if request.user and not request.user.is_anonymous:
@@ -213,6 +216,7 @@ def profile(request, username):
         return error404(request)
 
 
+@login_required
 def search(request):
     if request.method == 'GET':
         if request.user and not request.user.is_anonymous:
@@ -305,10 +309,10 @@ def edit_profile(request):
             new_name = request.POST.get("name", "")
             priv = request.POST.get("private", "")
             print(priv)
-            if(priv=='on'):
-                profile.private=True
+            if (priv == 'on'):
+                profile.private = True
             else:
-                profile.private=False
+                profile.private = False
             errors = [0, 0, 0, 0]
             if user.is_superuser:
                 return error404(request)
@@ -317,15 +321,15 @@ def edit_profile(request):
             else:
                 errors[0] = 1
             new_phone = request.POST.get("phone", "")
-            if new_phone.isnumeric() and len(new_phone)>=10:
-                profile.phone=new_phone
+            if new_phone.isnumeric() and len(new_phone) >= 10:
+                profile.phone = new_phone
             else:
                 errors[1] = 1
             new_alt_mail = request.POST.get("email", "")
-            import re
+
             regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
             if (re.search(regex, new_alt_mail)):
-                profile.alt_email=new_alt_mail
+                profile.alt_email = new_alt_mail
             else:
                 errors[2] = 1
             new_bio = request.POST.get("bio", "")
@@ -734,6 +738,27 @@ def polls(request):
                         'logged_in': logged_in
                     }
                     return render(request, 'polls.html', context)
+        else:
+            return HttpResponseRedirect(reverse('login'))
+    else:
+        return error404(request)
+
+
+def write_testimonial(request):
+    if request.method == 'GET':
+        if request.user and not request.user.is_anonymous:
+            logged_in = True
+        else:
+            logged_in = False
+        if logged_in:
+            user = User.objects.filter(username=request.user.username).first()
+            profiles = Profile.objects.filter(graduating=True)
+            context = {
+                'user': user,
+                'profiles': profiles,
+                'logged_in': logged_in
+            }
+            return render(request, 'write_testimonial.html',context )
         else:
             return HttpResponseRedirect(reverse('login'))
     else:

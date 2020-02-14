@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %} Profile Search | SAIL Year Book Portal {% endblock %}
+
+{% load static %}
+
+{% block content %}
+<input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names.." title="Type in a name">
+
+<table id="myTable">
+  <tr class="header">
+    <th style="width:60%;">Name</th>
+  </tr>
+    {% for profile in profiles %}
+  <tr>
+          <td>{{ profile.full_name }}</td></a>
+  </tr>
+    {% endfor %}
+</table>
+{% endblock %}
+
+{% block extrascripts %}
+
+    <script>
+function myFunction() {
+  var input, filter, table, tr, td, i, txtValue;
+  input = document.getElementById("myInput");
+  filter = input.value.toUpperCase();
+  table = document.getElementById("myTable");
+  tr = table.getElementsByTagName("tr");
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[0];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }
+  }
+}
+</script>
+{% endblock %}
