@@ -5,40 +5,52 @@
 {% load static %}
 
 {% block content %}
-<input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names.." title="Type in a name">
+<div class="col-lg-4 col-md-6">
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+            <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names.." title="Type in a name" style="width:100%;height:2.5em;opacity:0.9;">
+            </div>
+            <div class="card-body">
+                <table id="myTable" class="table-striped">
+                        {% for profile in profiles %}
+                        <tr>
+                        <td><a href="/{{ profile.user.username }}/" class="btn btn-light" style="text-decoration:none;">{{ profile.full_name }}</a></td>
+                        </tr>
+                        {% endfor %}
+                        <tr style="display:none;"><td>..No Results..</td></tr>
+                </table>
 
-<table id="myTable">
-  <tr class="header">
-    <th style="width:60%;">Name</th>
-  </tr>
-    {% for profile in profiles %}
-  <tr>
-          <td>{{ profile.full_name }}</td></a>
-  </tr>
-    {% endfor %}
-</table>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}
 
 {% block extrascripts %}
 
     <script>
 function myFunction() {
-  var input, filter, table, tr, td, i, txtValue;
+  var input, filter, table, tr, td, i, txtValue, flag;
+  flag = 0;
   input = document.getElementById("myInput");
   filter = input.value.toUpperCase();
   table = document.getElementById("myTable");
   tr = table.getElementsByTagName("tr");
-  for (i = 0; i < tr.length; i++) {
+  tr[tr.length-1].style.display="none";
+  for (i = 0; i < tr.length-1; i++) {
     td = tr[i].getElementsByTagName("td")[0];
     if (td) {
       txtValue = td.textContent || td.innerText;
       if (txtValue.toUpperCase().indexOf(filter) > -1) {
         tr[i].style.display = "";
+        flag=1;
       } else {
         tr[i].style.display = "none";
       }
     }
   }
+  if (flag==0) {tr[tr.length-1].style.display = "";}
 }
 </script>
 {% endblock %}
