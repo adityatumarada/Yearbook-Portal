@@ -5,7 +5,7 @@
 {% load static %}
 
 {% block content %}
-<div class="col-lg-4 col-md-6">
+<div class="col-lg-6 col-md-12" style="margin-left:auto;margin-right:auto;">
     <div class="container">
         <div class="card">
             <div class="card-header">
@@ -13,12 +13,14 @@
             </div>
             <div class="card-body">
                 <table id="myTable" class="table-striped">
+                    <tbody style="width:100%;">
                         {% for profile in profiles %}
                         <tr>
                         <td><a href="/{{ profile.user.username }}/" class="btn btn-light" style="text-decoration:none;">{{ profile.full_name }}</a></td>
                         </tr>
                         {% endfor %}
-                        <tr style="display:none;"><td>..No Results..</td></tr>
+                        <tr style="display:none;width:100%;"><td class="text-centre">..No Results..</td></tr>
+                    </tbody>
                 </table>
 
             </div>

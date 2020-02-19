@@ -3,5 +3,19 @@
 {% block title %} Home | SAIL Year Book Portal {% endblock %}
 
 {% block content %}
-   HOMEPAGE
+{% load static %}
+   <div class="container-fluid" style="background-color:rgb(229,224,204);">
+      <div class="row">
+         <div class="col-md-6">
+            <div style="margin:50px auto;width:60%;height:auto;overflow:hidden;">
+               <img src="{{ user_profile.profile_pic.url }}" width="100%" style="border:3px solid teal;border-radius:50%;"/>
+            </div>
+         </div>
+         <div class="col-md-6">
+            <div style="margin:auto;width:75%;">
+               <img src="{% static 'img/year.png' %}" height="550px" style="float:right;margin-right:100px;"/>
+            </div>
+         </div>
+      </div>
+   </div>
 {% endblock %}
