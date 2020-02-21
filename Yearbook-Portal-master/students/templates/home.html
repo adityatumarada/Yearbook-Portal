@@ -4,7 +4,7 @@
 
 {% block content %}
 {% load static %}
-   <div class="container-fluid" style="background-color:rgb(229,224,204);">
+  <!-- <div class="container-fluid" style="background-color:rgb(229,224,204);">
       <div class="row">
          <div class="col-md-6">
             <div style="margin:50px auto;width:60%;height:auto;overflow:hidden;">
@@ -17,5 +17,32 @@
             </div>
          </div>
       </div>
-   </div>
+   </div>-->
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <title> Professionals Resume HTML Bootstrap Template | Smarteyeapps.com</title>
+  
+      <link rel="shortcut icon" href=" {% static 'assets/images/fav.jpg' %}">
+      <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
+      <link rel="stylesheet" href="{% static 'assets/css/fontawsom-all.min.css'%}">
+      <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}" />
+  </head>
+  
+  <body>
+      <div class="container-fluid overcover">
+          <div class="container profile-box">
+              <div class="top-cover">
+                  <div class="covwe-inn">
+                      <div class="row no-margin">
+                          <div class="col-md-3 img-c">
+                              <img  src= "{% static 'assets/images/profile.jpg' %}" alt="">
+                          </div>
+                          <div class="col-md-9 tit-det">
+                              
+                              
+                          </div>
+                      </div>
+                  </div>
+              </div> 
 {% endblock %}
