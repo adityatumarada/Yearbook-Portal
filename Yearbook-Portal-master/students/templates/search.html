@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block title %} Profile Search | SAIL Year Book Portal {% endblock %}
+
+{% load static %}
+
+{% block content %}
+    <div class="container-fluid mt-4">
+        <div class="row">
+            {% for profile in profiles %}
+                <div class="col-xl-3 col-lg-4 col-md-6 col-sm-12 my-2">
+                    <div class="card shadow" style="display: inline-block; width: 100%;">
+                        <div class="row no-gutters">
+                            <div class="col-5">
+                                <a href="{% url 'profile' profile.user.username %}">
+                                    <img class="card-img img-fluid " src="{{ profile.profile_pic.url }}" style="border-top-right-radius: 0; border-bottom-right-radius: 0;" alt="Profile Picture">
+                                </a>
+                            </div>
+                            <div class="col-7">
+                                <div class="card-body">
+                                    <a href="{% url 'profile' profile.user.username %}">
+                                        <h5 class="card-title">{{ profile.full_name }}</h5>
+                                    </a>
+                                    <h6 class="card-subtitle">
+                                        {{ profile.get_department_display }}
+                                        <br>
+                                        {{ profile.get_program_display }}
+                                        <br>
+                                        20{{ profile.rollno | stringformat:"i" | slice:":2" }}
+                                    </h6>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <div class="row mt-3">
+            <div class="col-12">
+                {% if more_profiles %}
+                    <h4 class="text-center">More results available, please refine your search to see them</h4>
+                {% else %}
+                    <h4 class="text-center">End of results. If you still can't find your friends' profiles. Invite them to <a href="{% url 'home' %}">SAIL Yearbook Portal</a></h4>
+                {% endif %}
+            </div>
+        </div>
+{% endblock %}

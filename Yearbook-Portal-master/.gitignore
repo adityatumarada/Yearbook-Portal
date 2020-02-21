@@ -1,0 +1,7 @@
+venv/
+.idea/
+.vscode/
+**/migrations
+**/__pycache__
+yearbook/keys.py
+.DS_STORE

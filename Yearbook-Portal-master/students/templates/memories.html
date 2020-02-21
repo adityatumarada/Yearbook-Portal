@@ -1,0 +1,157 @@
+{% extends 'base.html' %}
+
+{% block title %} Memories | SAIL Year Book Portal {% endblock %}
+
+{% load static %}
+
+{% block extrastyles %}
+{#    <link rel="stylesheet" href="{% static 'css/cropper.min.css' %}" />#}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.1/cropper.min.css" integrity="sha256-SyWqODkStAbrafgJ9K8twjULP7yL6yTRZKoFGjDYybI=" crossorigin="anonymous" />
+{% endblock %}
+
+{% block extrascripts %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.1/cropper.min.js" integrity="sha256-+PQmsBomnsT/06XEdk7ibt/9We4DX+VKzJsw/+DCzc0=" crossorigin="anonymous"></script>
+    <script>
+          /* SCRIPT TO OPEN THE MODAL WITH THE PREVIEW */
+          $(document).ready(
+              function (){
+                  var submitting = false;
+                  $("#profile-pic-upload-input").change(function () {
+                      if (this.files && this.files[0]) {
+                          var reader = new FileReader();
+                          reader.onload = function (event) {
+                              $("#new-crop-image").attr("src", event.target.result);
+                              submitting = false;
+                              $("#profile-pic-crop-modal").modal("show");
+                          };
+                          reader.readAsDataURL(this.files[0]);
+                      }
+                  });
+                  /* SCRIPTS TO HANDLE THE CROPPER BOX */
+                  var newImage = document.getElementById("new-crop-image");
+                  var cropBoxData;
+                  var canvasData;
+                  var cropper;
+                  $("#profile-pic-crop-modal").on("shown.bs.modal", function () {
+                      cropper = new Cropper(newImage,{
+                          viewMode: 3,
+                          aspectRatio: 1,
+                          autoCropArea: 0.75,
+                          dragMode: "move",
+                          ready: function () {
+                              cropper.setCanvasData(canvasData);
+                              cropper.setCropBoxData(cropBoxData);
+                          }
+                      });
+                  }).on("hidden.bs.modal", function () {
+                      cropBoxData = cropper.getCropBoxData();
+                      canvasData = cropper.getCanvasData();
+                      cropper.destroy();
+                  });
+                  /* SCRIPT TO COLLECT THE DATA AND POST TO THE SERVER */
+                  var uploadForm = $("#profile-pic-upload-form");
+
+                  uploadForm.submit(function (event) {
+                      event.preventDefault();
+                      var formData = new FormData(this);
+                      $.ajax({
+                          url: {% url 'memories_upload_pic' %},
+                          type: 'POST',
+                          data: formData,
+                          success: function (data) {
+                              submitting = false;
+                              if (data.status === 1) {
+                                  alert(data.message);
+                                  location.reload(true);
+                              } else {
+                                  alert(data.error);
+                              }
+                          },
+                          cache: false,
+                          contentType: false,
+                          processData: false
+                      });
+                  });
+
+                  $("#crop-done").click(function () {
+                      if (!submitting) {
+                          submitting = true;
+                          var cropData = cropper.getData();
+                          $("#profile-pic-crop-x").val(Math.round(cropData.x));
+                          $("#profile-pic-crop-y").val(Math.round(cropData.y));
+                          $("#profile-pic-crop-height").val(Math.round(cropData.height));
+                          $("#profile-pic-crop-width").val(Math.round(cropData.width));
+                          uploadForm.submit();
+                      }
+                      else{
+                          alert("Please wait uploading image");
+                      }
+                  });
+          });
+    </script>
+{% endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row mt-2">
+            <div class="col-lg-4"></div>
+            <div class="col-lg-4">
+                <h3 class="text-center">Memories</h3>
+                <div class="card shadow">
+                    <div class="card-body">
+                        {% if updated %}
+                            <h4 class="text-center" id="profile-updated-notification">Profile updated successfully!</h4>
+                            <script>
+                                $(document).ready(function () {
+                                    setTimeout(function () {
+                                        $("#profile-updated-notification").addClass("d-none");
+                                    },1500)
+                                });
+                            </script>
+                        {% endif %}
+                         <h4>Jab Ham Fache the</h4>
+                        <div class="row">
+                            <div class="card" style="width:100%">
+
+                                <img class="card-img-top" src="{{memories.image.url}}" alt="Profile Picture">
+                            </div>
+                        </div>
+                        <br>
+                        <form method="post" action="{% url 'memories_upload_pic' %}" enctype="multipart/form-data" id="profile-pic-upload-form">
+                            <div class="form-group">
+                                <label for="profile-pic-upload-input">Upload new pic</label>
+                                <input class="form-control-file" type="file" name="profile_pic" id="profile-pic-upload-input" autocomplete="off">
+                                <input class="d-none" id="profile-pic-crop-x" name="x">
+                                <input class="d-none" id="profile-pic-crop-y" name="y">
+                                <input class="d-none" id="profile-pic-crop-width" name="width">
+                                <input class="d-none" id="profile-pic-crop-height" name="height">
+                                {% csrf_token %}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4"></div>
+            <div class="modal fade" id="profile-pic-crop-modal" data-backdrop="static" data-keyboard="false">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h4 class="modal-title">Crop the photo</h4>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <div>
+                                <img class="" src="" id="new-crop-image" style="max-width: 100%;">
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" id="crop-done" class="btn btn-primary">Crop and upload</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
