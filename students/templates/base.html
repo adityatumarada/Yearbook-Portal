@@ -13,6 +13,7 @@
     <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+        <link rel="stylesheet" type="text/css" href="{% static 'css/extra.css'%}">
         <link href="{% static 'img/sail_logo.png' %}" rel="shortcut icon" type="image/png">
     {% block extrastyles %}{% endblock %}
 
@@ -29,7 +30,9 @@
     <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
 </head>
 <style >
-
+a {
+    color:teal;
+}
 body {
  padding-top:50px;
 }
@@ -42,6 +45,9 @@ background-color: #3aafa9;
 color:#FFF;
 border-color: #3aafa9;
 }
+.nav-link {
+color: rgba(255, 255, 255, 0.99);
+}
 .btn-custom:hover, .btn-custom:focus, .btn-custom:active, .btn-custom.active, .open .dropdown-toggle.btn-custom {
 background-color: #21E0EE;
 color:#FFF;
@@ -50,7 +56,7 @@ border-color: #21E0EE;
 </style>
 <body class="d-flex flex-column h-100" style="font-family: 'Nunito', sans-serif;">
     {% if logged_in %}
-        <nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light py-0">
+        <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark py-0">
             <a class="navbar-brand" href="{% url 'home' %}" style="font-size:x-large">
                 <img height="40" src="{% static 'img/sail_logo.png' %}"> SAIL Yearbook
             </a>
@@ -60,21 +66,21 @@ border-color: #21E0EE;
             <div class="collapse navbar-collapse" id="mainNavbar">
                 <form class="form-inline my-2 my-lg-0 mx-auto" method="get" action="{% url 'search' %}">
                     <div class="input-group">
-                        <input class="form-control" name="key" placeholder="Search for friends" autocomplete="off">
+                        <input style="font-family: 'Nunito', sans-serif;" class="form-control" name="key" placeholder="Search for friends" autocomplete="off">
                         <div class="input-group-append">
-                            <button class="btn btn-outline-primary" type="submit"><i class="fas fa-search"></i></button>
+                            <button class="btn btn-outline-secondary" type="submit"><i class="fas fa-search"></i></button>
                         </div>
                     </div>
                 </form>
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'home' %}">Home</a>
+                        <a style="color: #FFF;" class="nav-link" href="{% url 'home' %}">Home</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'profile' user.username %}">My Profile</a>
+                        <a style="color: #FFF;" class="nav-link" href="{% url 'profile' user.username %}">My Profile</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+                        <a style="color: #FFF;" class="nav-link" href="{% url 'logout' %}">Logout</a>
                     </li>
                 </ul>
             </div>
@@ -82,18 +88,18 @@ border-color: #21E0EE;
 
         <div class="container-fluid">
                     <div class="col-md-12 col-lg-12">
-                        <div class="card card-primary">
-                            <div class="card-body" style="padding: 5px">
+                        <div class="card card-primary" style=" background: rgba(0,0,0,0);">
+                            <div class="card-body" style="padding: 5px;">
                                     <!-- <div class="col-md-12 col-lg-12"> -->
                                         <div class="row">
                                         <div class="col-sm-12  col-md-4 col-lg-4">
-                                        <a href="{% url 'polls' %}" class="btn btn-custom btn-lg btn-block" role="button"><span class="fa fa-bar-chart" aria-hidden="true"> </span>&nbsp View Polls</a>
+                                        <a href="{% url 'polls' %}" class="btn btn-lg btn-block btn-dark" role="button"><span style="color: #3aafa9;"class="fa fa-bar-chart" aria-hidden="true"> </span>&nbsp;View Polls</a>
                                       </div>
                                       <div class="col-sm-12  col-md-4 col-lg-4">
-                                      <a href="{% url 'write_testimonial' %}" class="btn btn-custom btn-lg btn-block" role="button"><span class="fa fa-pencil" aria-hidden="true"></span>&nbsp Write Testimonials </a>
+                                      <a href="{% url 'write_testimonial' %}" class="btn btn-dark btn-lg btn-block" role="button"><span style="color: #3aafa9;" class="fa fa-pencil" aria-hidden="true"></span> Write Testimonials </a>
                                       </div>
                                       <div class="col-sm-12  col-md-4 col-lg-4">
-                                      <a href="{% url 'memories' %}" class="btn btn-custom btn-lg btn-block" role="button"><span class="fa fa-camera" aria-hidden="true"></span>&nbsp See Memories</a>
+                                      <a href="{% url 'memories' %}" class="btn btn-dark btn-lg btn-block" role="button"><span style="color: #3aafa9;" class="fa fa-camera" aria-hidden="true"></span style="color: #3aafa9;">&nbsp;See Memories</a>
                                         </div>
                                         </div>
 
@@ -103,7 +109,7 @@ border-color: #21E0EE;
                     </div>
             </div>
     {% else %}
-        <nav class="navbar-nav fixed-top navbar-expand-lg navbar-light bg-light py-0">
+        <nav class="navbar-nav fixed-top navbar-expand-lg navbar-dark bg-dark py-0">
             <a class="navbar-brand" href="{% url 'home' %}">
                 <img height="40" src="{% static 'img/sail_logo.png' %}"> SAIL Yearbook
             </a>
@@ -115,7 +121,7 @@ border-color: #21E0EE;
                     <div class="input-group">
                         <input class="form-control" name="key" placeholder="Search for friends" autocomplete="off">
                         <div class="input-group-append">
-                            <button class="btn btn-outline-primary" type="submit"><i class="fas fa-search"></i></button>
+                            <button class="btn btn-outline-secondary" type="submit"><i class="fas fa-search"></i></button>
                         </div>
                     </div>
                 </form>
@@ -133,10 +139,10 @@ border-color: #21E0EE;
     <main class="flex-shrink-0 mt-5">
         {% block content %}{% endblock %}
     </main>
-    <footer class="footer mt-auto py-1" style="background-color: #f5f5f5;">
+    <footer class="footer mt-auto py-1 bg-dark" >
         <div class="container-fluid">
 
-            <span class="text-muted float-right">Developed and Presented with <span style="font-size:130%;color:red;">&#10084;</span>  by <a href="http://iitg.ac.in/sail/index.html" class="d-inline-block pl-0 text-black-50"><img src="{% static 'img/sail_logo.png' %}" height="40">Student Alumni Interaction Linkage (SAIL)</a></span>
+            <span class="text-muted float-right">Developed and Presented with <span style="font-size:130%;color:red;">&#10084;</span>  by <a href="http://iitg.ac.in/sail/index.html" class="d-inline-block pl-0" style="color:teal;"><img src="{% static 'img/sail_logo.png' %}" height="40">Student Alumni Interaction Linkage (SAIL)</a></span>
         </div>
     </footer>
     {% block extrascripts %}{% endblock %}

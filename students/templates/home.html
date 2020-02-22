@@ -4,7 +4,7 @@
 
 {% block content %}
 {% load static %}
-   <div class="container-fluid" style="background-color:rgb(229,224,204);">
+  <!-- <div class="container-fluid" style="background-color:rgb(229,224,204);">
       <div class="row">
          <div class="col-md-6">
             <div style="margin:50px auto;width:60%;height:auto;overflow:hidden;">
@@ -17,5 +17,107 @@
             </div>
          </div>
       </div>
-   </div>
+   </div>-->
+   <head>
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+      <title>my home page</title>
+      <link href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700,800,900" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css?family=Merriweather+Sans:400,700" rel="stylesheet">
+      <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic' rel='stylesheet' type='text/css'>
+
+      <link rel="shortcut icon" href=" {% static 'assets/images/fav.jpg' %}">
+      <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
+      <link rel="stylesheet" href="{% static 'assets/css/font-awesome-all.min.css'%}">
+      <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}" />
+  </head>
+  <style>
+  html {
+	 min-height: 100%;
+	 background: linear-gradient(#9d9181, #9e866c);
+}
+ body {
+	 background-color: transparent;
+}
+ .card-profile {
+	 width: 340px;
+	 margin: 50px auto;
+	 background-color: #e6e5e1;
+	 border-radius: 0;
+	 border: 0;
+	 box-shadow: 1em 1em 2em rgba(0, 0, 0, .2);
+}
+ .card-profile .card-img-top {
+	 border-radius: 0;
+}
+ .card-profile .card-img-profile {
+	 max-width: 100%;
+	 border-radius: 50%;
+	 margin-top: -95px;
+	 margin-bottom: 35px;
+	 border: 5px solid #e6e5e1;
+}
+ .card-profile .card-title {
+	 margin-bottom: 50px;
+}
+ .card-profile .card-title small {
+	 display: block;
+	 font-size: 0.6em;
+	 margin-top: 0.2em;
+}
+ .card-profile .card-links {
+	 margin-bottom: 25px;
+}
+ .card-profile .card-links .fa {
+	 margin: 0 1em;
+	 font-size: 1.6em;
+}
+ .card-profile .card-links .fa:focus, .card-profile .card-links .fa:hover {
+	 text-decoration: none;
+}
+ .card-profile .card-links .fa.fa-dribbble {
+	 color: #ea4b89;
+	 font-weight: bold;
+}
+ .card-profile .card-links .fa.fa-dribbble:hover {
+	 color: #e51d6b;
+}
+ .card-profile .card-links .fa.fa-twitter {
+	 color: #68aade;
+}
+ .card-profile .card-links .fa.fa-twitter:hover {
+	 color: #3e92d5;
+}
+ .card-profile .card-links .fa.fa-facebook {
+	 color: #3b5999;
+}
+ .card-profile .card-links .fa.fa-facebook:hover {
+	 color: #2d4474;
+}
+ 
+  </style>
+
+  <body>
+      
+      <div class="container-fluid overcover">
+          <div class="container profile-box">
+              <div class="top-cover">
+                  <div class="covwe-inn">
+                      <div class="row no-margin">
+                          <div class="col-sm-9 col-md-5 col-lg-5 img-c">
+                              <img  src= "{{ user_profile.profile_pic.url }}" alt="profile pic">
+                          </div>
+                          
+                          <div class="col-sm-12 col-md-7 col-lg-7 tit-det">
+                            <h5 class="card-title"><b>{{ profile.full_name }}</b></h5>
+                            <div class="description text-center">
+                                <p >{{ profile.bio }} </p>
+                            </div>
+                          </div>   
+
+                          </div>
+                          
+                      </div>
+                  </div>
+              </div> 
 {% endblock %}

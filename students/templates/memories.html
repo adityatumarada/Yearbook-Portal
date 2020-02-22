@@ -96,7 +96,7 @@
         <div class="row mt-2">
             <div class="col-lg-4"></div>
             <div class="col-lg-4">
-                <h3 class="text-center">Memories</h3>
+                <h2 class="text-center" style="font-weight: bold;">Memories</h2>
                 <div class="card shadow">
                     <div class="card-body">
                         {% if updated %}
@@ -119,7 +119,7 @@
                         <br>
                         <form method="post" action="{% url 'memories_upload_pic' %}" enctype="multipart/form-data" id="profile-pic-upload-form">
                             <div class="form-group">
-                                <label for="profile-pic-upload-input">Upload new pic</label>
+                                <label for="profile-pic-upload-input">Upload new pic!</label>
                                 <input class="form-control-file" type="file" name="profile_pic" id="profile-pic-upload-input" autocomplete="off">
                                 <input class="d-none" id="profile-pic-crop-x" name="x">
                                 <input class="d-none" id="profile-pic-crop-y" name="y">
@@ -147,7 +147,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" id="crop-done" class="btn btn-primary">Crop and upload</button>
+                            <button type="button" style="background-color: #3aafa9;"  id="crop-done" class="btn btn-primary">Crop and upload</button>
                         </div>
                     </div>
                 </div>

@@ -134,9 +134,9 @@
                                 <input class="form-control {% if errors.0 %}is-invalid{% endif %}" id="yearbook-name" placeholder="Name as you want in the Yearbook" name="name" value="{{ profile.full_name }}" autocomplete="off">
                                 <div class="invalid-feedback">Length of Name out of bounds</div>
                                 <br>
-                                <label for="yearbook-private">Enable this to Hide your testimonials from Everyone Else</label>
-                                <input class="form-control" id="yearbook-private" type="checkbox" name="private" {% if profile.private %}checked{% else %}{% endif %}>
-                                <br>
+                                <label style="width:90%;" for="yearbook-private">Enable this to Hide your testimonials from Everyone Else</label>
+                                <input class="form-control" id="yearbook-private" style="width:10%;position:relative;float:right;" type="checkbox" name="private" {% if profile.private %}checked{% else %}{% endif %}>
+                                <br><br>
                                 <label for="yearbook-phone">Contact Number</label>
                                 <input class="form-control {% if errors.1 %}is-invalid{% endif %}" id="yearbook-phone" placeholder="Permanent Phone Number" name="phone" value="{{ profile.phone }}" autocomplete="off">
                                 <div class="invalid-feedback">Enter Valid Phone Number</div>
@@ -151,7 +151,7 @@
 
                                 {% csrf_token %}
                                 <br>
-                                <button class="btn btn-primary" style="width:100%" type="submit">Save Changes</button>
+                                <button class="btn btn-dark" style="width:100%" type="submit">Save Changes</button>
                             </div>
                         </form>
                     </div>
@@ -173,7 +173,7 @@
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" id="crop-done" class="btn btn-primary">Crop and upload</button>
+                            <button type="button" id="crop-done" class="btn btn-dark">Crop and upload</button>
                         </div>
                     </div>
                 </div>
