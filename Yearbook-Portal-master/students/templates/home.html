@@ -25,7 +25,7 @@
   
       <link rel="shortcut icon" href=" {% static 'assets/images/fav.jpg' %}">
       <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">
-      <link rel="stylesheet" href="{% static 'assets/css/fontawsom-all.min.css'%}">
+      <link rel="stylesheet" href="{% static 'assets/css/font-awesome-all.min.css'%}">
       <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}" />
   </head>
   
@@ -36,11 +36,11 @@
                   <div class="covwe-inn">
                       <div class="row no-margin">
                           <div class="col-md-3 img-c">
-                              <img  src= "{% static 'assets/images/profile.jpg' %}" alt="">
+                              <img  src= "{{ user_profile.profile_pic.url }}" alt="">
                           </div>
                           <div class="col-md-9 tit-det">
                               
-                              
+
                           </div>
                       </div>
                   </div>

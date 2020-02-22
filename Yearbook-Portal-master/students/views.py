@@ -345,7 +345,8 @@ def edit_profile(request):
                 'logged_in': True
             }
             if errors[0] + errors[1] + errors[2] + errors[3] == 0:
-                return redirect('/'+profile.user.username+'/')
+                #return redirect('/'+profile.user.username+'/')
+                return HttpResponseRedirect(('/'+profile.user.username+'/'))
             else:
                 context['updated'] = False
                 return render(request, 'editprofile.html', context)
