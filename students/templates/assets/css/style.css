@@ -217,7 +217,9 @@ body {
 .top-cover {
   background-image: url(../images/bg.jpg);
   background-size: cover;
-  width: 100%; }
+  width: 100%;
+  background-position:static;
+  }
 
 .overcover {
   padding: 15px; }
