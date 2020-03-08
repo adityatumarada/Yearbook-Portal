@@ -74,7 +74,7 @@ border-color: #21E0EE;
                 </form>
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a style="color: #FFF;" class="nav-link" href="{% url 'write_testimonial' %}">Write_Testimonials</a>
+                        <a style="color: #FFF;" class="nav-link" href="{% url 'write_testimonial' %}">Write Testimonials</a>
                     </li>
 
                     <li class="nav-item">
@@ -146,7 +146,7 @@ border-color: #21E0EE;
     <footer class="footer mt-auto py-1 bg-dark" >
         <div class="container-fluid">
 
-            <span class="text-muted float-right">Developed and Presented with <span style="font-size:130%;color:red;">&#10084;</span>  by <a href="http://iitg.ac.in/sail/index.html" class="d-inline-block pl-0" style="color:teal;"><img src="{% static 'img/sail_logo.png' %}" height="40">Student Alumni Interaction Linkage (SAIL)</a></span>
+            <span class="text-muted float-right"><a  style="color:teal;" href="{% url 'team' %}">Developed by</a></span>
         </div>
     </footer>
     {% block extrascripts %}{% endblock %}

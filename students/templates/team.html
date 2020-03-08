@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %} Team | SAIL Year Book Portal {% endblock %}
+
+{% block content %}
+{% load static %}
+<style>
+    .col-lg-4,col-md-4,col-sm-6,col-xs-12 {
+        margin-bottom:50px;
+    }
+    h1.text-center {
+        margin-bottom:60px;
+
+    }
+</style>
+
+    <div class="container">
+        <h1 class="text-center">Web-Developers</h1>
+        <div class="row">
+
+            <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                <div class="card" style="width: 18rem;">
+                    <img src="{% static 'img/sail_logo.png' %}" class="card-img-top" alt="">
+                    <div class="card-body">
+                        <h5 class="card-title">Pavan Anna</h5>
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                    </div>
+                </div>
+            </div>
+
+             <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                <div class="card" style="width: 18rem;">
+                    <img src="{% static 'img/team/1.jpg' %}" class="card-img-top" alt="">
+                    <div class="card-body">
+                        <h5 class="card-title">Aditya Tumarada</h5>
+                        <p class="card-text">Web-Coordinator<br>SAIL</p>
+                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                    </div>
+                </div>
+            </div>
+
+             <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                <div class="card" style="width: 18rem;">
+                    <img src="{% static 'img/team/2.jpg' %}" class="card-img-top" alt="">
+                    <div class="card-body">
+                        <h5 class="card-title">SriHarsha Nakka</h5>
+                        <p class="card-text">Web-Coordinator<br>SAIL</p>
+                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                    </div>
+                </div>
+            </div>
+
+             <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                <div class="card" style="width: 18rem;">
+                    <img src="{% static 'img/team/anandh.jpg' %}" class="card-img-top" alt="">
+                    <div class="card-body">
+                        <h5 class="card-title">Chinmai Anandh</h5>
+                        <p class="card-text">Web-Executive<br>SAIL</p>
+                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                    </div>
+                </div>
+            </div>
+
+             <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                <div class="card" style="width: 18rem;">
+                    <img src="{% static 'img/sail_logo.png' %}" class="card-img-top" alt="">
+                    <div class="card-body">
+                        <h5 class="card-title">Jaya Prakash</h5>
+                        <p class="card-text">Web-Executive<br>SAIL</p>
+                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                    </div>
+                </div>
+            </div>
+
+             <div class="col-lg-4 col-md-6 col-sm-12 col-xs-12">
+                <div class="card" style="width: 18rem;">
+                    <img src="{% static 'img/sail_logo.png' %}" class="card-img-top" alt="">
+                    <div class="card-body">
+                        <h5 class="card-title">Card title</h5>
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <a href="#" class="btn btn-primary">Go somewhere</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

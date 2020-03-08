@@ -345,8 +345,8 @@ def edit_profile(request):
                 'logged_in': True
             }
             if errors[0] + errors[1] + errors[2] + errors[3] == 0:
-                #return redirect('/'+profile.user.username+'/')
-                return HttpResponseRedirect(('/'+profile.user.username+'/'))
+                # return redirect('/'+profile.user.username+'/')
+                return HttpResponseRedirect(('/' + profile.user.username + '/'))
             else:
                 context['updated'] = False
                 return render(request, 'editprofile.html', context)
@@ -759,7 +759,28 @@ def write_testimonial(request):
                 'profiles': profiles,
                 'logged_in': logged_in
             }
-            return render(request, 'write_testimonial.html',context )
+            return render(request, 'write_testimonial.html', context)
+        else:
+            return HttpResponseRedirect(reverse('login'))
+    else:
+        return error404(request)
+
+
+def team(request):
+    if request.method == 'GET':
+        if request.user and not request.user.is_anonymous:
+            logged_in = True
+        else:
+            logged_in = False
+        if logged_in:
+            user = User.objects.filter(username=request.user.username).first()
+            profiles = Profile.objects.filter(graduating=True)
+            context = {
+                'user': user,
+                'profiles': profiles,
+                'logged_in': logged_in
+            }
+            return render(request, 'team.html', context)
         else:
             return HttpResponseRedirect(reverse('login'))
     else:
