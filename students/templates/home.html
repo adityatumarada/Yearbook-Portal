@@ -196,10 +196,10 @@
                         {% for testimonial in testimonials %}
                             <div class="card shadow my-2 mx-lg-3" id="testimonial-{{ testimonial.id }}">
                                 <div class="card-body">
-                                    <p class="card-text">
+                                    <p class="card-text" style="padding-bottom:20px;">
                                         {{ testimonial.content | linebreaksbr }}
                                     </p>
-                                    <p class="float-left my-0" style="width:fit-content;">
+                                    <p class="float-left my-0 col-lg-3 col-md-3 col-sm-3 col-xs-3" style="width:fit-content;">
                                         {% if 1 %}
                                             {% if testimonial.favourite %}
                                                 <button class="btn btn-dark" onclick="favouriteTestimonial({{ testimonial.id }})" data-toggle="tooltip" title="Remove the testimonial from favourites to not show it on your final Yearbook">
@@ -212,8 +212,8 @@
                                             {% endif %}
                                         {% endif %}
                                     </p>
-                                    <p class="float-right my-0">
-                                        <a href="{% url 'profile' testimonial.given_by.user.username %}">
+                                    <p class="float-right my-0 col-lg-9 col-md-9 col-sm-9 col-xs-9">
+                                        <a href="{% url 'profile' testimonial.given_by.user.username %}" style="float:right;">
                                             ~ {{ testimonial.given_by.full_name }}
                                         </a>
                                     </p>
