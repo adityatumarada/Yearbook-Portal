@@ -7,9 +7,9 @@
         <div class="row mx-lg-5 mt-4">
             {% if user_profile.graduating %}
               
-                <div class="col-lg-3"></div>
-                <div class="col-lg-6">
-                    <h3 class="text-center">Polls</h3>
+                <!--div class="col-lg-3"></div-->
+                <div class="col-lg-9" style="margin-left:auto;margin-right:auto;">
+                    <h3 class="text-center" style="font-weight:bold;">Polls</h3>
                     <div class="container">
                         {% for question, nominees in polls.items %}
                             <div class="card shadow my-2 mx-lg-3">
@@ -91,7 +91,7 @@
                         {% endfor %}
                     </div>
                 </div>
-                <div class="col-lg-3"></div>
+
             {% else %}
                 <div class="col-lg-3"></div>
                 <div class="col-lg-6">
