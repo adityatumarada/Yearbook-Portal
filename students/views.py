@@ -3,7 +3,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpResponseBadRequest
 from django.urls import reverse
 from django.contrib.auth.models import User
-from .models import Testimonial, PollAnswer, PollQuestion, ProfileAnswers, ProfileQuestion, Profile, Memories
+from .models import Testimonial, PollAnswer, PollQuestion, ProfileAnswers, ProfileQuestion, Profile
 from django.db.models.functions import Length
 from PIL import Image
 import os
@@ -13,7 +13,6 @@ from yearbook.settings import BASE_DIR, MEDIA_ROOT, POLL_STOP, PORTAL_STOP
 # Create your views here.
 
 profile_pic_upload_folder = os.path.join(MEDIA_ROOT, Profile.profile_pic.field.upload_to)
-memories_image1_upload_folder = os.path.join(MEDIA_ROOT, Memories.image.field.upload_to)
 
 
 def votes_sort_key(item):
@@ -63,21 +62,8 @@ def home(request):
                     return render(request, 'home.html', context)
                 else:
                     testimonials = Testimonial.objects.filter(given_to=user_profile).order_by('-id')
-                    for question in poll_questions:
-                        answers = PollAnswer.objects.filter(question=question)
-                        myanswer = answers.filter(voted_by=user_profile).first()
-                        if myanswer:
-                            myanswer = myanswer.answer
-                        else:
-                            myanswer = None
-                        poll_nominees = []
-                        for answer in answers:
-                            if answer.answer not in poll_nominees:
-                                poll_nominees.append(answer.answer)
-                        polls[(question, myanswer)] = sorted(poll_nominees, key=nominees_sort_key)
                     context = {
                         'testimonials': testimonials,
-                        'polls': polls,
                         'user': user,
                         'user_profile': user_profile,
                         'logged_in': logged_in
@@ -104,10 +90,7 @@ def profile(request, username):
                 else:
                     myprofile = False
                 profile = Profile.objects.filter(user=profile_user).first()
-                if profile.private:
-                    private = True
-                else:
-                    private = False
+
                 if not profile.graduating:
                     context = {
                         'logged_in': True,
@@ -136,30 +119,6 @@ def profile(request, username):
                         }
                         return render(request, 'profile.html', context)
                     else:
-                        if private:
-                            testimonials = Testimonial.objects.filter(given_to=profile).order_by('-favourite',
-                                                                                                 Length(
-                                                                                                     'content').desc(),
-                                                                                                 '-id')
-                            profile_questions = ProfileQuestion.objects.all()
-                            profile_answers = ProfileAnswers.objects.filter(profile=profile)
-                            mytestimonial = testimonials.filter(given_by=user_profile).first()
-                            temp = Testimonial.objects.filter(given_to=profile).filter(given_by=user_profile)
-                            answers = {}
-                            for question in profile_questions:
-                                answers[question] = profile_answers.filter(question=question).first()
-                            context = {
-                                'logged_in': True,
-                                'myprofile': myprofile,
-                                'user': user,
-                                'private': private,
-                                'testimonials': temp,
-                                'mytestimonial': mytestimonial,
-                                'profile': profile,
-                                'answers': answers
-                            }
-                            return render(request, 'profile.html', context)
-                        else:
                             testimonials = Testimonial.objects.filter(given_to=profile).order_by('-favourite',
                                                                                                  Length(
                                                                                                      'content').desc(),
@@ -174,7 +133,7 @@ def profile(request, username):
                                 'logged_in': True,
                                 'myprofile': myprofile,
                                 'user': user,
-                                'private': private,
+
                                 'testimonials': testimonials,
                                 'mytestimonial': mytestimonial,
                                 'profile': profile,
@@ -307,12 +266,6 @@ def edit_profile(request):
             user = User.objects.filter(username=request.user.username).first()
             profile = Profile.objects.filter(user=user).first()
             new_name = request.POST.get("name", "")
-            priv = request.POST.get("private", "")
-            print(priv)
-            if (priv == 'on'):
-                profile.private = True
-            else:
-                profile.private = False
             errors = [0, 0, 0, 0]
             if user.is_superuser:
                 return error404(request)

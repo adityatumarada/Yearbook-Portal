@@ -109,26 +109,6 @@
 
 {% block extrascripts %}
     <script>
-        function deleteTestimonial(testimonial_id) {
-            if (confirm("Do you want to delete the testimonial ?!")) {
-                $.ajax({
-                    type: "POST",
-                    url: '{% url "delete_testimonial" %}',
-                    data: {
-                        'testimonial_id': testimonial_id,
-                        'csrfmiddlewaretoken': Cookies.get("csrftoken")
-                    },
-                    success: function (data) {
-                        if (data.status === 1) {
-                            $("#testimonial-" + testimonial_id.toString()).remove();
-                            alert(data.message);
-                        } else {
-                            alert(data.error);
-                        }
-                    }
-                });
-            }
-        }
         function nominateFriend(question_id, username, name){
             $("#vote-to-"+question_id+"-nominate").val(username);
             $("#vote-to-"+question_id+"-nominate-button").removeClass('d-none');

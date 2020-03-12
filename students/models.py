@@ -66,7 +66,6 @@ class Profile(models.Model):
     profile_pic = models.ImageField(upload_to='profile_pics/', default='profile_pics/no-profile-pic.png')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     full_name = models.CharField(max_length=100)
-    private = models.BooleanField(default=False)
     rollno = models.IntegerField()
     program = models.CharField(max_length=2, choices=program_values)
     department = models.CharField(max_length=3, choices=department_values)
@@ -120,10 +119,3 @@ class ProfileAnswers(models.Model):
     def __str__(self):
         return self.question.question + " " + self.profile.full_name
 
-
-class Memories(models.Model):
-    profile = models.ForeignKey(Profile, null=True, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to='memories_image1/', default='memories_image1/no-profile-pic.png')
-
-    def __str__(self):
-        return self.profile.full_name
