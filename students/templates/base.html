@@ -64,14 +64,12 @@ border-color: #21E0EE;
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="mainNavbar">
-                <form class="form-inline my-2 my-lg-0 mx-auto" method="get" action="{% url 'search' %}">
-                    <div class="input-group">
-                        <input style="font-family: 'Nunito', sans-serif;" class="form-control" name="key" placeholder="Search for friends" autocomplete="off">
-                        <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="submit"><i class="fas fa-search"></i></button>
-                        </div>
-                    </div>
-                </form>
+
+                <input class="form-inline my-2 my-lg-0 mx-auto" placeholder="Search for friends" id="vote-to-nominate-search" autocomplete="off">
+                <ul class="list-group vote-to-nominate-search-results" style="border-top: 0" id="vote-to-nominate-search-results">
+                </ul>
+                <br>
+
                 <ul class="navbar-nav">
               
                     <li class="nav-item">
@@ -91,6 +89,28 @@ border-color: #21E0EE;
                     </li>
                 </ul>
             </div>
+            <script>
+                                   $("#vote-to-nominate-search").keyup(function(){
+                                        $.ajax({
+                                            type: "GET",
+                                            url: "{% url 'search' %}",
+                                            data: {
+                                                'key': $(this).val(),
+                                                'json': 1,
+                                                'csrfmiddlewaretoken': Cookies.get("csrftoken")
+                                            },
+                                            success: function (data) {
+                                                var search_list = $("#vote-to-nominate-search-results");
+                                                search_list.empty();
+                                                var html = "";
+                                                for (var i = 0; i < data.length; i++) {
+                                                    html = html+'<li class="list-group-item"><a href="/'+data[i].username+'/">'+data[i].name+'</a></li>';
+                                                }
+                                                search_list.html(html);
+                                            }
+                                        });
+                                   });
+                                </script>
         </nav>
     {% else %}
         <nav class="navbar-nav fixed-top navbar-expand-lg navbar-dark bg-dark py-0">

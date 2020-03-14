@@ -36,7 +36,6 @@ urlpatterns = [
                   path('edit_profile/', student_views.edit_profile, name='edit_profile'),
                   path('upload_profile_pic/', student_views.upload_profile_pic, name='upload_profile_pic'),
                   path('write_testimonial/', student_views.write_testimonial, name='write_testimonial'),
-                  path('memories_upload_pic/', student_views.memories_upload_pic, name='memories_upload_pic'),
                   path('<username>/', student_views.profile, name='profile'),
                   path('<username>/add_testimonial/', student_views.add_testimonial, name='add_testimonial'),
                   path('<username>/change_answer/', student_views.change_answer, name='change_answer'),

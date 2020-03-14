@@ -71,6 +71,7 @@ class Profile(models.Model):
     department = models.CharField(max_length=3, choices=department_values)
     phone = models.IntegerField(default=+919999999999)
     alt_email = models.EmailField(max_length=300,default="not_found@gmail.com")
+    alt_email = models.EmailField(max_length=300,default="not_found@gmail.com")
     bio = models.TextField(max_length=1000)
     graduating = models.BooleanField(default=False)
 
