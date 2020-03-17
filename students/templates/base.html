@@ -65,10 +65,14 @@ border-color: #21E0EE;
             </button>
             <div class="collapse navbar-collapse" id="mainNavbar">
 
-                <input class="form-inline my-2 my-lg-0 mx-auto" placeholder="Search for friends" id="vote-to-nominate-search" autocomplete="off">
-                <ul class="list-group vote-to-nominate-search-results" style="border-top: 0" id="vote-to-nominate-search-results">
-                </ul>
-                <br>
+                <form class="form-inline my-2 my-lg-0 mx-auto" method="get" action="{% url 'search' %}">
+                    <div class="input-group">
+                        <input style="font-family: 'Nunito', sans-serif;" class="form-control" name="key" placeholder="Search for friends" autocomplete="off">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-secondary" type="submit"><i class="fas fa-search"></i></button>
+                        </div>
+                    </div>
+                </form>
 
                 <ul class="navbar-nav">
               
