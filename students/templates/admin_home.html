@@ -5,10 +5,10 @@
 {% block content %}
     <div class="container-fluid">
         <div class="row mx-lg-5 mt-4">
-            <div class="col-lg-3"></div>
-            <div class="col-lg-6">
-                <h3 class="text-center">Polls</h3>
-                <div class="container">
+            <div class="col-xl-3"></div>
+            <div class="col-xl-6">
+                <h3 class="text-center" style="font-weight:bold;">Polls</h3>
+                <div class="container-fluid">
                     {% for question, poll in polls.items %}
                         <div class="card my-2 mx-lg-3">
                             <div class="card-header">
@@ -19,11 +19,11 @@
                                     <div class="row my-2">
                                         <div class="col-8">
                                             <div class="progress">
-                                              <div class="progress-bar poll" role="progressbar" style="width: 0" votes="{{ votes.1 | length}}" totalvotes="{{ question.1 }}"><a class="text-light nav-link" href="#" data-toggle="modal" data-target="#votes-modal-{{ question.0.id }}-{{ votes.0.id }}">{{ votes.1 | length }} votes</a></div>
+                                              <div class="progress-bar bg-dark poll" role="progressbar" style="width: 0" votes="{{ votes.1 | length}}" totalvotes="{{ question.1 }}"><a class="nav-link" style="color: #3aafa9;" href="#" data-toggle="modal" data-target="#votes-modal-{{ question.0.id }}-{{ votes.0.id }}">{{ votes.1 | length }} votes</a></div>
                                             </div>
                                         </div>
                                         <div class="col-4">
-                                            <a class="badge badge-primary align-top" href="{% url 'profile' votes.0.user.username %}">{{ votes.0.full_name | truncatechars:20 }}</a>
+                                            <a class="badge badge-dark align-top" style="color: #3aafa9;" href="{% url 'profile' votes.0.user.username %}">{{ votes.0.full_name | truncatechars:20 }}</a>
                                         </div>
                                     </div>
                                     <div class="modal fade" id="votes-modal-{{ question.0.id }}-{{ votes.0.id }}" tabindex="-1" role="dialog">
@@ -38,7 +38,7 @@
                                                 <div class="modal-body">
                                                     <div class="d-flex flex-row flex-wrap">
                                                         {% for vote in votes.1 %}
-                                                            <a class="btn btn-primary my-1 mx-1" href="{% url 'profile' vote.user.username %}">{{ vote.full_name }}</a>
+                                                            <a class="btn btn-dark my-1 mx-1" style="color: #3aafa9;" href="{% url 'profile' vote.user.username %}">{{ vote.full_name }}</a>
                                                         {% endfor %}
                                                     </div>
                                                 </div>
@@ -51,7 +51,7 @@
                     {% endfor %}
                 </div>
             </div>
-            <div class="col-lg-3"></div>
+            <div class="col-xl-3"></div>
         </div>
     </div>
 {% endblock %}

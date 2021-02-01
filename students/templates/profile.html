@@ -4,10 +4,10 @@
 {% load static %}
 {% block content %}
     <div class="container-fluid">
-        <div class="row mt-4">
+        <div class="row mb-2">
             {% if profile.graduating %}
-                <div class="col-lg-3 col-md-12 col-sm-12" >
-                    <div class="container"  >
+                <div class="col-xl-3 col-lg-12">
+                    <div class="container-fluid">
                         <div class="card shadow">
                             <img class="card-img-top" width="100%" src="{{ profile.profile_pic.url }}" alt="Profile Picture"/>
                             <div class="card-body">
@@ -21,13 +21,8 @@
                                 </h6>
                                 <br>
                                 <div class="card-text">
-
                                     <h6><b>Webmail</b></h6>
                                     <p><a href="mailto:{{ profile.user.email }}">{{ profile.user.email }}</a></p>
-                                    <h6><b>Alternate Mail</b></h6>
-                                    <p><a href="mailto:{{ profile.alt_email }}">{{ profile.alt_email }}</a></p>
-                                    <h6><b>Mobile Number</b></h6>
-                                    <p><a href="tel:{{ profile.phone }}">{{ profile.phone }}</a></p>
                                     <h6><b>Bio</b></h6>
                                     <p>{{ profile.bio }}</p>
                                 </div>
@@ -38,15 +33,15 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4 col-md-12">
-                    <div class="container">
+                <div class="col-xl-4 col-lg-12  mt-xl-0 mt-sm-4">
+                    <div class="container-fluid">
                         {% for question,answer in answers.items %}
                         <div class="card shadow my-2 mx-lg-3">
                             <div class="card-header">
                                 <h6 class="mb-0">{{ question.question }}</h6>
                             </div>
                             <div class="card-body">
-                                <div class="card-text">
+                                <div class="card-text text-justify">
                                     {% if answer %}{{ answer.answer | linebreaksbr}}{% endif %}
                                 </div>
                                 {% if myprofile %}
@@ -67,6 +62,7 @@
                                                 <div class="modal-body">
                                                     <textarea id="profile-answer-{{ question.id }}" autocomplete="off" class="form-control" rows="5" name="content" placeholder="Write your answer here">{% if answer %}{{answer.answer}}{% endif %}</textarea>
                                                     <br>
+                                                    {% comment %} <span id="profile-answer-{{ question.id }}-char-count" class="badge badge-primary float-right my-1">0/500</span> {% endcomment %}
                                                     <button class="btn btn-dark" style="width: 100%;" onclick="changeAnswer({{ question.id }})">
                                                         {% if answer %} Change {% else %} Add {% endif %} answer
                                                     </button>
@@ -80,9 +76,9 @@
                         {% endfor %}
                     </div>
                 </div>
-                <div class="col-lg-5 col-md-12">
-                    <div class="container">
-                        <h2 class="text-center" style="font-weight: bold;" >Testimonials</h2>
+                <div class="col-xl-5 col-lg-12 mt-xl-0 mt-sm-4">
+                    <div class="container-fluid">
+                        <h3 class="text-center" style="font-weight: bold;">Testimonials</h3>
                         {% if logged_in and not user.is_superuser %}
                             {% if not myprofile %}
                                 <button type="button" class="btn btn-dark" style="width: 100%;" data-toggle="modal" data-target="#testimonial-modal">
@@ -100,6 +96,7 @@
                                             <div class="modal-body">
                                                 <textarea id="add-testimonial-form-content" autocomplete="off" class="form-control" rows="5" name="content" placeholder="Write your testimonial for {{ profile.full_name }} here">{% if mytestimonial %}{{mytestimonial.content}}{% endif %}</textarea>
                                                 <br>
+                                                {% comment %} <span id="add-testimonial-char-count" class="badge badge-primary float-right my-1">0/500</span> {% endcomment %}
                                                 <button class="btn btn-dark" style="width: 100%;" onclick="addTestimonial()">
                                                     {% if mytestimonial %} Edit {% else %} Add {% endif %}testimonial
                                                 </button>
@@ -107,6 +104,8 @@
                                         </div>
                                     </div>
                                 </div>
+                            {% else %}
+                                <a class="btn btn-dark" style="width: 100%;" href="{% url 'write_testimonial' %}#testimonials">Testimonials by You</a>
                             {% endif %}
                         {% else %}
                             <a class="btn btn-dark" style="width: 100%;" href="{% url 'login' %}?next={% url 'profile' profile.user.username %}">Login to add Testimonial</a>
@@ -114,7 +113,7 @@
                         {% for testimonial in testimonials %}
                             <div class="card shadow my-2 mx-lg-3" id="testimonial-{{ testimonial.id }}">
                                 <div class="card-body">
-                                    <p class="card-text">
+                                    <p class="card-text text-justify">
                                         {{ testimonial.content | linebreaksbr }}
                                     </p>
                                     <p class="float-left my-0">
@@ -128,8 +127,12 @@
                                                     <i style="color: #3aafa9;" class="far fa-star"></i>
                                                 </button>
                                             {% endif %}
+                                                <button class="btn btn-dark" onclick="deleteTestimonial({{ testimonial.id }})" data-toggle="tooltip" title="Delete the testimonial from your profile.">
+                                                    <i class="fas fa-trash" style="color: #3aafa9;"></i>
+                                                </button>
                                         {% elif testimonial.given_by.user == user %}
-                                            <button class="btn btn-dark" onclick="deleteTestimonial({{ testimonial.id }})"><i style="color: #3aafa9;" class="fas fa-trash"></i></button>
+                                            <button class="btn btn-dark" data-toggle="modal" data-target="#testimonial-modal"><i style="color: #3aafa9;" class="fas fa-edit"></i></button>
+                                            <button class="btn btn-dark" onclick="deleteTestimonial({{ testimonial.id }})"><i style="color: #3aafa9;" class="fas fa-trash" data-toggle="tooltip" title="Delete the testimonial from your profile."></i></button>
                                         {% endif %}
                                     </p>
                                     <p class="float-right my-0">
@@ -143,9 +146,9 @@
                     </div>
                 </div>
             {% else %}
-                <div class="col-lg-4"></div>
-                <div class="col-lg-4 col-md-12">
-                    <div class="container">
+                <div class="col-xl-4"></div>
+                <div class="col-xl-4 col-lg-12">
+                    <div class="container-fluid">
                         <div class="card shadow">
                             <img class="card-img-top" width="100%" src="{{ profile.profile_pic.url }}" alt="Profile Picture"/>
                             <div class="card-body">
@@ -161,14 +164,9 @@
                                 <div class="card-text">
                                     <h6><b>Webmail</b></h6>
                                     <p><a href="mailto:{{ profile.user.email }}">{{ profile.user.email }}</a></p>
-                                    <h6><b>Alternate Mail</b></h6>
-                                    <p><a href="mailto:{{ profile.alt_email }}">{{ profile.alt_email }}</a></p>
-                                    <h6><b>Phone Number</b></h6>
-                                    <p><a href="tel:{{ profile.phone }}">{{ profile.phone }}</a></p>
                                     <h6><b>Bio</b></h6>
                                     <p>{{ profile.bio }}</p>
                                 </div>
-
                             </div>
                             {% if myprofile %}
                                 <a class="btn btn-dark" style="border-top-right-radius: 0;border-top-left-radius: 0" href="{% url 'edit_profile' %}">Edit Profile</a>
@@ -176,7 +174,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4"></div>
+                <div class="col-xl-4"></div>
             {% endif %}
         </div>
     </div>
@@ -204,7 +202,7 @@
 
         }
         function deleteTestimonial(testimonial_id){
-            if (confirm("Do you want to delete the testimonial ?!")) {
+            if (confirm("Do you want to delete the testimonial ?!\n It can't be recovered once deleted.")) {
                 $.ajax({
                     type: "POST",
                     url: '{% url "delete_testimonial" %}',

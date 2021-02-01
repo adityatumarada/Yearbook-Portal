@@ -5,55 +5,143 @@
 {% load static %}
 
 {% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-1 col-lg-12"></div>
+            <div class="col-xl-4 col-lg-12" >
+                <div class="container-fluid">
+                    <h3 class="text-center" style="font-weight:bold;">Search for Graduating Students</h3>
+                    <div class="card">
+                        <div class="card-header">
+                            <input type="text" id="search-input" onkeyup="searchFunction()" placeholder="Search for names.." title="Type in a name"
+                                style="width:100%;height:2.5em;opacity:0.9;">
+                        </div>
+                        <div class="card-body">
+                            <div class="d-flex justify-content-around flex-wrap" id="profile-links-flex">
+                                    {% for profile in profiles %}
+                                        <a href="{% url 'profile' profile.user.username %}" class="m-2 btn btn-dark profile-link-button"
+                                        style="text-decoration:none;">{{ profile.full_name }} <p class="profile-link-text d-none" style="text-decoration:none;">
+                                        {{ profile.full_name }} {{ profile.user.first_name }}</p> </a>
 
-<div class="col-lg-6 col-md-12" style="margin-left:auto;margin-right:auto;">
-    <div class="container">
-        <div class="card">
-            <div class="card-header">
-            <input type="text" id="myInput" onkeyup="myFunction()" placeholder="Search for names.." title="Type in a name" style="width:100%;height:2.5em;opacity:0.9;">
+                                    {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-                <table id="myTable" class="table-striped">
-                    <tbody style="width:100%;">
-                        {% for profile in profiles %}
-                        <tr>
-                        <td><a href="/{{ profile.user.username }}/" class="btn btn-light" style="text-decoration:none;">{{ profile.full_name }}</a></td>
-                        </tr>
-                        {% endfor %}
-                        <tr style="display:none;width:100%;"><td class="text-centre">..No Results..</td></tr>
-                    </tbody>
-                </table>
-
+            <div class="col-xl-1 col-lg-12"></div>
+            <div class="col-xl-5 col-lg-12 mt-xl-0 mt-sm-4">
+                <div class="container-fluid">
+                    <h3 class="text-center" id="testimonials" style="font-weight: bold;">Testimonials by You</h3>
+                    {% for testimonial in testimonials %}
+                        <div class="card shadow my-2 mx-lg-3" id="testimonial-{{ testimonial.id }}">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    To
+                                    <a href="{% url 'profile' testimonial.given_to.user.username %}">
+                                        {{ testimonial.given_to.full_name }}
+                                    </a>
+                                </h5>
+                                <p class="card-text text-justify">
+                                    {{ testimonial.content | linebreaksbr }}
+                                </p>
+                                <p class="float-left my-0">
+                                    <button class="btn btn-dark" data-toggle="modal" data-target="#testimonial-modal-{{ testimonial.id }}"><i style="color: #3aafa9;" class="fas fa-edit"></i></button>
+                                </p>
+                                <p class="float-right my-0">
+                                    <button class="btn btn-dark" onclick="deleteTestimonial({{ testimonial.id }})" data-toggle="tooltip" title="Delete the testimonial from your profile."><i style="color: #3aafa9;" class="fas fa-trash"></i></button>
+                                </p>
+                            </div>
+                        </div>
+                        <div class="modal fade" id="testimonial-modal-{{ testimonial.id }}" tabindex="-1" role="dialog">
+                            <div class="modal-dialog" role="document">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h6 class="modal-title">{% if mytestimonial %} Edit {% else %} Add {% endif %}testimonial</h6>
+                                        <button type="button" class="close" data-dismiss="modal">
+                                            <span>&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <textarea id="add-testimonial-form-content-{{ testimonial.id }}" autocomplete="off" class="form-control" rows="5" name="content" placeholder="Write your testimonial for {{ profile.full_name }} here">{{testimonial.content}}</textarea>
+                                        <br>
+                                        {% comment %} <span id="add-testimonial-char-count" class="badge badge-primary float-right my-1">0/500</span> {% endcomment %}
+                                        <button class="btn btn-dark" style="width: 100%;" onclick="addTestimonial('{% url 'add_testimonial' testimonial.given_to.user.username %}', {{ testimonial.id }})">
+                                            Edit testimonial
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
             </div>
+            <div class="col-xl-1 col-lg-12"></div>
         </div>
     </div>
-</div>
 {% endblock %}
 
 {% block extrascripts %}
 
-    <script>
-function myFunction() {
-  var input, filter, table, tr, td, i, txtValue, flag;
-  flag = 0;
-  input = document.getElementById("myInput");
-  filter = input.value.toUpperCase();
-  table = document.getElementById("myTable");
-  tr = table.getElementsByTagName("tr");
-  tr[tr.length-1].style.display="none";
-  for (i = 0; i < tr.length-1; i++) {
-    td = tr[i].getElementsByTagName("td")[0];
-    if (td) {
-      txtValue = td.textContent || td.innerText;
-      if (txtValue.toUpperCase().indexOf(filter) > -1) {
-        tr[i].style.display = "";
-        flag=1;
-      } else {
-        tr[i].style.display = "none";
-      }
-    }
-  }
-  if (flag==0) {tr[tr.length-1].style.display = "";}
-}
+<script>
+		function searchFunction() {
+			var input = document.getElementById("search-input");
+			var filter = input.value.toUpperCase();
+			var profile_flex = document.getElementById("profile-links-flex");
+			var profile_buttons = profile_flex.getElementsByTagName("a");
+			for (i = 0; i < profile_buttons.length; i++) {
+				var profile_button = profile_buttons[i];
+				if (profile_button) {
+					var profile_name = profile_button.getElementsByTagName("p")[0].innerText;
+					if (profile_name.toUpperCase().indexOf(filter) > -1) {
+						profile_button.style.display = "";
+					}
+					else {
+						profile_button.style.display = "none";
+					}
+				}
+			}
+		}
+		function deleteTestimonial(testimonial_id){
+            if (confirm("Do you want to delete the testimonial ?!\n It can't be recovered once deleted.")) {
+                $.ajax({
+                    type: "POST",
+                    url: '{% url "delete_testimonial" %}',
+                    data: {
+                        'testimonial_id': testimonial_id,
+                        'csrfmiddlewaretoken': Cookies.get("csrftoken")
+                    },
+                    success: function (data) {
+                        if (data.status === 1){
+                            $("#testimonial-"+testimonial_id.toString()).remove();
+                            alert(data.message);
+                            location.reload();
+                        }
+                        else{
+                            alert(data.error);
+                        }
+                    }
+                });
+            }
+
+        }
+        function addTestimonial(testimonialUrl, testimonialId) {
+            $.ajax({
+                type: "POST",
+                url: testimonialUrl,
+                data: {
+                    'content': $("#add-testimonial-form-content-"+testimonialId).val(),
+                    'csrfmiddlewaretoken': Cookies.get("csrftoken")
+                },
+                success: function (data) {
+                    if (data.status === 1){
+                        location.reload();
+                    }
+                    else{
+                        alert(data.error);
+                    }
+                }
+            });
+        }
 </script>
 {% endblock %}

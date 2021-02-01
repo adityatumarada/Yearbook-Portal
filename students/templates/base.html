@@ -3,56 +3,45 @@
 <html class="h-100">
 <head>
     <title>{% block title %}{% endblock %}</title>
-        {% load static %}
-{#        <link rel="stylesheet" href="{% static 'css/uikit.min.css' %}"/>#}
-{#        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}"/>#}
     <!-- Google Fonts -->
         <link href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700,800,900" rel="stylesheet">
         <link href="https://fonts.googleapis.com/css?family=Merriweather+Sans:400,700" rel="stylesheet">
         <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic' rel='stylesheet' type='text/css'>
     <!-- Bootstrap CSS -->
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
-        <link rel="stylesheet" type="text/css" href="{% static 'css/extra.css'%}">
+        <link rel="stylesheet" href="{% static "css/bootstrap-4.4.1.min.css" %}">
+    <!-- Font Awesome CSS -->
+        <link href="{%static "css/all.min.css" %}" rel="stylesheet"></script>
+        
         <link href="{% static 'img/sail_logo.png' %}" rel="shortcut icon" type="image/png">
     {% block extrastyles %}{% endblock %}
 
-    <!-- UIkit JS -->
-{#    <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.3/js/uikit.min.js"></script>#}
-{#    <script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.3/js/uikit-icons.min.js"></script>#}
     <!-- jQuery JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+    <script src="{% static "js/jquery-3.4.1.min.js" %}"></script>
+    <!-- JavaScript Cookie JS -->
+    <script src="{% static 'js/js.cookie-2.2.1.min.js' %}"></script>
     <!-- Bootstrap JS -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    <!-- icons library -->
-    <link href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="{% static 'js/popper-1.16.0.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap-4.4.1.min.js' %}"></script>
+
 </head>
 <style >
-a {
-    color:teal;
-}
-body {
- padding-top:50px;
-}
-.panel-body .btn:not(.btn-block) {
- width:120px;margin-bottom:5px;
-}
-.btn-custom
-{
-background-color: #3aafa9;
-color:#FFF;
-border-color: #3aafa9;
-}
-.nav-link {
-color: rgba(255, 255, 255, 0.99);
-}
-.btn-custom:hover, .btn-custom:focus, .btn-custom:active, .btn-custom.active, .open .dropdown-toggle.btn-custom {
-background-color: #21E0EE;
-color:#FFF;
-border-color: #21E0EE;
-}
+    a {
+        color: teal;
+    }
+
+    body {
+        padding-top: 50px;
+    }
+
+    .panel-body .btn:not(.btn-block) {
+        width: 120px;
+        margin-bottom: 5px;
+    }
+
+    .nav-link {
+        text-align: center;
+        color: rgba(255, 255, 255, 0.99);
+    }
 </style>
 <body class="d-flex flex-column h-100" style="font-family: 'Nunito', sans-serif;">
     {% if logged_in %}
@@ -64,18 +53,16 @@ border-color: #21E0EE;
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="mainNavbar">
-
                 <form class="form-inline my-2 my-lg-0 mx-auto" method="get" action="{% url 'search' %}">
                     <div class="input-group">
                         <input style="font-family: 'Nunito', sans-serif;" class="form-control" name="key" placeholder="Search for friends" autocomplete="off">
                         <div class="input-group-append">
-                            <button class="btn btn-outline-secondary" type="submit"><i class="fas fa-search"></i></button>
+                            <button class="btn btn-outline-secondary" type="submit"><i class="fas fa-search" style="color: #3aafa9;"></i></button>
                         </div>
                     </div>
                 </form>
-
                 <ul class="navbar-nav">
-              
+                
                     <li class="nav-item">
                         <a style="color: #FFF;" class="nav-link" href="{% url 'home' %}">Home</a>
                     </li>
@@ -86,6 +73,9 @@ border-color: #21E0EE;
                         <a style="color: #FFF;" class="nav-link" href="{% url 'write_testimonial' %}">Write Testimonials</a>
                     </li>
                     <li class="nav-item">
+                        <a style="color: #FFF;" class="nav-link" href="{% url 'write_testimonial' %}#testimonials">Testimonials by You</a>
+                    </li>
+                    <li class="nav-item">
                         <a style="color: #FFF;" class="nav-link" href="{% url 'profile' user.username %}">My Profile</a>
                     </li>
                     <li class="nav-item">
@@ -93,28 +83,6 @@ border-color: #21E0EE;
                     </li>
                 </ul>
             </div>
-            <script>
-                                   $("#vote-to-nominate-search").keyup(function(){
-                                        $.ajax({
-                                            type: "GET",
-                                            url: "{% url 'search' %}",
-                                            data: {
-                                                'key': $(this).val(),
-                                                'json': 1,
-                                                'csrfmiddlewaretoken': Cookies.get("csrftoken")
-                                            },
-                                            success: function (data) {
-                                                var search_list = $("#vote-to-nominate-search-results");
-                                                search_list.empty();
-                                                var html = "";
-                                                for (var i = 0; i < data.length; i++) {
-                                                    html = html+'<li class="list-group-item"><a href="/'+data[i].username+'/">'+data[i].name+'</a></li>';
-                                                }
-                                                search_list.html(html);
-                                            }
-                                        });
-                                   });
-                                </script>
         </nav>
     {% else %}
         <nav class="navbar-nav fixed-top navbar-expand-lg navbar-dark bg-dark py-0">
@@ -144,13 +112,13 @@ border-color: #21E0EE;
             </div>
         </nav>
     {% endif %}
-    <main class="flex-shrink-0 mt-5">
+    <main class="flex-shrink-0 mt-3">
         {% block content %}{% endblock %}
     </main>
-    <footer class="footer mt-auto py-1 bg-dark" >
+    <footer class="footer mt-auto py-1 bg-dark">
         <div class="container-fluid">
-
-            <span class="text-muted float-right"><a  style="color:white;font-size: 25px" href="{% url 'team' %}">Developed by Coding Club<img height="30" src="{% static 'img/cc_logo.png' %}"> and SAIL &nbsp<img height="30" src="{% static 'img/sail_logo.png' %}"> &nbsp</a></span>
+            <span class="text-muted float-right">
+                <a class="d-inline-block pl-0" style="color:white;" href="{% url 'team' %}"> Developed by Coding Club <img height="40" src="{% static 'img/cc_logo.png' %}"> and SAIL <img height="40" src="{% static 'img/sail_logo.png' %}"></a></span>
         </div>
     </footer>
     {% block extrascripts %}{% endblock %}

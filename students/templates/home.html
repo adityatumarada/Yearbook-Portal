@@ -3,217 +3,22 @@
 {% block title %} Home | SAIL Year Book Portal {% endblock %}
 
 {% block content %}
-{% load static %}
-  <!-- <div class="container-fluid" style="background-color:rgb(229,224,204);">
-      <div class="row">
-         <div class="col-md-6">
-            <div style="margin:50px auto;width:60%;height:auto;overflow:hidden;">
-               <img src="{{ user_profile.profile_pic.url }}" width="100%" style="border:3px solid teal;border-radius:50%;"/>
-            </div>
-         </div>
-         <div class="col-md-6">
-            <div style="margin:auto;width:75%;">
-               <img src="{% static 'img/year.png' %}" height="550px" style="float:right;margin-right:100px;"/>
-            </div>
-         </div>
-      </div>
-   </div>-->
-   <head>
-      <meta charset="utf-8">
-      <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-      <title>my home page</title>
-      <link href="https://fonts.googleapis.com/css?family=Nunito:200,300,400,600,700,800,900" rel="stylesheet">
-      <link href="https://fonts.googleapis.com/css?family=Merriweather+Sans:400,700" rel="stylesheet">
-      <link href='https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic' rel='stylesheet' type='text/css'>
-
-<!--      <link rel="shortcut icon" href=" {% static 'assets/images/fav.jpg' %}">-->
-<!--      <link rel="stylesheet" href="{% static 'assets/css/bootstrap.min.css' %}">-->
-<!--      <link rel="stylesheet" href="{% static 'assets/css/font-awesome-all.min.css'%}">-->
-<!--      <link rel="stylesheet" type="text/css" href="{% static 'assets/css/style.css' %}" />-->
-  </head>
-  <!--style>
-  html {
-	 min-height: 100%;
-	 background: linear-gradient(#9d9181, #9e866c);
-}
- body {
-	 background-color: transparent;
-}
- .card-profile {
-	 width: 340px;
-	 margin: 50px auto;
-	 background-color: #e6e5e1;
-	 border-radius: 0;
-	 border: 0;
-	 box-shadow: 1em 1em 2em rgba(0, 0, 0, .2);
-}
- .card-profile .card-img-top {
-	 border-radius: 0;
-}
- .card-profile .card-img-profile {
-	 max-width: 100%;
-	 border-radius: 50%;
-	 margin-top: -95px;
-	 margin-bottom: 35px;
-	 border: 5px solid #e6e5e1;
-}
- .card-profile .card-title {
-	 margin-bottom: 50px;
-}
- .card-profile .card-title small {
-	 display: block;
-	 font-size: 0.6em;
-	 margin-top: 0.2em;
-}
- .card-profile .card-links {
-	 margin-bottom: 25px;
-}
- .card-profile .card-links .fa {
-	 margin: 0 1em;
-	 font-size: 1.6em;
-}
- .card-profile .card-links .fa:focus, .card-profile .card-links .fa:hover {
-	 text-decoration: none;
-}
- .card-profile .card-links .fa.fa-dribbble {
-	 color: #ea4b89;
-	 font-weight: bold;
-}
- .card-profile .card-links .fa.fa-dribbble:hover {
-	 color: #e51d6b;
-}
- .card-profile .card-links .fa.fa-twitter {
-	 color: #68aade;
-}
- .card-profile .card-links .fa.fa-twitter:hover {
-	 color: #3e92d5;
-}
- .card-profile .card-links .fa.fa-facebook {
-	 color: #3b5999;
-}
- .card-profile .card-links .fa.fa-facebook:hover {
-	 color: #2d4474;
-}
- 
-  </style-->
-
-  <body>
-      
-     <div class="container-fluid">
-        <div class="row mx-lg-5 mt-4">
+    <div class="container-fluid">
+        <div class="row">
             {% if user_profile.graduating %}
-
-                <div class="col-lg-3"></div>
-
-            <div class="col-lg-12 container-fluid d-flex"  style="color:black;">
-<!--                <div class="col-lg-6 flex-column">-->
-<!--                    <h3 class="text-center">Polls</h3>-->
-<!--                    <div class="container"  style="height:549px;overflow:auto;">-->
-<!--                        {% for question, nominees in polls.items %}-->
-<!--                            <div class="card shadow my-2 mx-lg-3">-->
-<!--                                <div class="card-header">-->
-<!--                                    <h5 class="mb-0">{{ question.0.question }}</h5>-->
-<!--                                </div>-->
-<!--                                {% if question.1 %}-->
-<!--                                <div class="card-body">-->
-<!--                                    <p class="mb-0">You voted for <a href="{% url 'profile' question.1.user.username %}">{{ question.1.full_name }}</a></p>-->
-<!--                                </div>-->
-<!--                                {% endif %}-->
-<!--                                <button type="button" class="btn btn-dark" style="border-top-right-radius: 0;border-top-left-radius: 0;width: 100%;" data-toggle="modal" data-target="#add-vote-modal-{{ question.0.id }}">-->
-<!--                                    {% if question.1 %}Change your{% else %}Add a{% endif %} Vote-->
-<!--                                </button>-->
-<!--                                <div class="modal fade" id="add-vote-modal-{{ question.0.id }}" tabindex="-1" role="dialog">-->
-<!--                                    <div class="modal-dialog" role="document">-->
-<!--                                        <div class="modal-content">-->
-<!--                                            <div class="modal-header">-->
-<!--                                                <h6 class="modal-title">{% if question.1 %}Change your{% else %}Add a{% endif %} vote in Poll : {{ question.0.question }}</h6>-->
-<!--                                                <button type="button" class="close" data-dismiss="modal">-->
-<!--                                                    <span>&times;</span>-->
-<!--                                                </button>-->
-<!--                                            </div>-->
-<!--                                            <div class="modal-body">-->
-<!--                                                <form class="form-group" method="post" action="{% url 'add_vote' %}" onsubmit="$(document).reload();">-->
-<!--                                                    <input name="question_id" value="{{ question.0.id }}" class="d-none" id="add-vote-question-id-{{ question.0.id }}">-->
-<!--                                                    {% for nominee in nominees %}-->
-<!--                                                        <div class="form-check">-->
-<!--                                                            <input class="form-check-input" type="radio" name="voting_to" id="vote-to-{{ question.0.id }}-{{ nominee.id }}" value="{{ nominee.user.username }}" {% if question.1 == nominee %}checked="checked"{% endif %}>-->
-<!--                                                            <label class="form-check-label" for="vote-to-{{ question.0.id }}-{{ nominee.id }}">-->
-<!--                                                                <a href="{% url 'profile' nominee.user.username %}">{{ nominee.full_name }}</a>-->
-<!--                                                            </label>-->
-<!--                                                            <br><br>-->
-<!--                                                        </div>-->
-<!--                                                    {% endfor %}-->
-<!--                                                    <div class="form-check d-none" id="vote-to-{{ question.0.id }}-nominate-button">-->
-<!--                                                        <input class="form-check-input" type="radio" name="voting_to" id="vote-to-{{ question.0.id }}-nominate" value="">-->
-<!--                                                        <label class="form-check-label" for="vote-to-{{ question.0.id }}-nominate">-->
-<!--                                                            <a id="vote-to-{{ question.0.id }}-nominate-profile-link">Not nominated</a>-->
-<!--                                                        </label>-->
-<!--                                                        <br><br>-->
-<!--                                                    </div>-->
-<!--                                                    <input class="form-control" placeholder="Search for a friend to nominate" id="vote-to-{{ question.0.id }}-nominate-search" autocomplete="off">-->
-<!--                                                    <ul class="list-group vote-to-nominate-search-results" style="border-top: 0" id="vote-to-{{ question.0.id }}-nominate-search-results">-->
-<!--                                                    </ul>-->
-<!--                                                    <br>-->
-<!--                                                    {% csrf_token %}-->
-<!--                                                    <button type="submit" class="btn btn-dark" style="width: 100%;">-->
-<!--                                                        {% if question.1 %}Change your{% else %}Add a{% endif %} Vote-->
-<!--                                                    </button>-->
-<!--                                                </form>-->
-<!--                                            </div>-->
-<!--                                        </div>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                                <script>-->
-<!--                                   $("#vote-to-{{ question.0.id }}-nominate-search").keyup(function(){-->
-<!--                                        $.ajax({-->
-<!--                                            type: "GET",-->
-<!--                                            url: "{% url 'search' %}",-->
-<!--                                            data: {-->
-<!--                                                'key': $(this).val(),-->
-<!--                                                'json': 1,-->
-<!--                                                'csrfmiddlewaretoken': Cookies.get("csrftoken")-->
-<!--                                            },-->
-<!--                                            success: function (data) {-->
-<!--                                                var search_list = $("#vote-to-{{ question.0.id }}-nominate-search-results");-->
-<!--                                                search_list.empty();-->
-<!--                                                var html = "";-->
-<!--                                                for (var i = 0; i < data.length; i++) {-->
-<!--                                                    html = html+'<li class="list-group-item" onclick="nominateFriend(\''+'{{question.0.id}}'+'\', \''+data[i].username+'\', \''+data[i].name+'\')"><a href="#">'+data[i].name+'</a></li>';-->
-<!--                                                }-->
-<!--                                                search_list.html(html);-->
-<!--                                            }-->
-<!--                                        });-->
-<!--                                   });-->
-<!--                                </script>-->
-<!--                            </div>-->
-<!--                        {% endfor %}-->
-<!--                    </div>-->
-<!--                </div>-->
-                <div class="col-lg-12 flex-column">
-
-                        <h2 class="text-center" style="font-weight: bold;" >Testimonials</h2>
-                    <div class="container" style="height:544px;overflow:auto;">
+                <div class="col-xl-5 col-lg-12 mx-xl-auto">
+                    <h3 class="text-center" style="font-weight:bold;">Testimonials</h3>
+                    <div class="container-fluid">
                         {% for testimonial in testimonials %}
                             <div class="card shadow my-2 mx-lg-3" id="testimonial-{{ testimonial.id }}">
                                 <div class="card-body">
-                                    <p class="card-text" style="padding-bottom:20px;">
-                                        {{ testimonial.content | linebreaksbr }}
+                                    <p class="card-text text-justify">{{ testimonial.content | linebreaksbr }}</p>
+                                    <p class="float-left my-0">
+                                        <button class="btn btn-dark" onclick="deleteTestimonial({{ testimonial.id }})" data-toggle="tooltip" title="Delete the testimonial from your profile.">
+                                            <i class="fas fa-trash" style="color: #3aafa9;"></i></button>
                                     </p>
-                                    <p class="float-left my-0 col-lg-3 col-md-3 col-sm-3 col-xs-3" style="width:fit-content;">
-                                        {% if 1 %}
-                                            {% if testimonial.favourite %}
-                                                <button class="btn btn-dark" onclick="favouriteTestimonial({{ testimonial.id }})" data-toggle="tooltip" title="Remove the testimonial from favourites to not show it on your final Yearbook">
-                                                    <i style="color: #3aafa9;" class="fas fa-star"></i>
-                                                </button>
-                                            {% else %}
-                                                <button class="btn btn-dark" onclick="favouriteTestimonial({{ testimonial.id }})" data-toggle="tooltip" title="Add the testimonial to favourites to show it on your final Yearbook">
-                                                    <i style="color: #3aafa9;" class="far fa-star"></i>
-                                                </button>
-                                            {% endif %}
-                                        {% endif %}
-                                    </p>
-                                    <p class="float-right my-0 col-lg-9 col-md-9 col-sm-9 col-xs-9">
-                                        <a href="{% url 'profile' testimonial.given_by.user.username %}" style="float:right;">
+                                    <p class="float-right my-0">
+                                        <a href="{% url 'profile' testimonial.given_by.user.username %}">
                                             ~ {{ testimonial.given_by.full_name }}
                                         </a>
                                     </p>
@@ -222,46 +27,26 @@
                         {% endfor %}
                     </div>
                 </div>
-            </div>
 
-
-                <div class="col-lg-3"></div>
             {% else %}
-                <div class="col-lg-3"></div>
-                <div class="col-lg-6">
+                <div class="col-xl-3"></div>
+                <div class="col-xl-6">
                     <h2 class="text-center">Search for the graduating batch students, above to give testimonials.</h2>
                 </div>
-                <div class="col-lg-3"></div>
+                <div class="col-xl-3"></div>
             {% endif %}
-        </div>
     </div>
+    </div>
+{% endblock %}
 
-  </body>
+{% block extrastyles %}
+
 {% endblock %}
 
 {% block extrascripts %}
     <script>
-        function favouriteTestimonial(testimonial_id){
-            $.ajax({
-                type: "POST",
-                url: '{% url "favourite_testimonial" %}',
-                data: {
-                    'testimonial_id': testimonial_id,
-                    'csrfmiddlewaretoken': Cookies.get("csrftoken")
-                },
-                success: function (data) {
-                    if (data.status === 1){
-                        location.reload();
-                    }
-                    else{
-                        alert(data.error);
-                    }
-                }
-            });
-
-        }
-        function deleteTestimonial(testimonial_id){
-            if (confirm("Do you want to delete the testimonial ?!")) {
+        function deleteTestimonial(testimonial_id) {
+            if (confirm("Do you want to delete the testimonial ?!\n It can't be recovered once deleted.")) {
                 $.ajax({
                     type: "POST",
                     url: '{% url "delete_testimonial" %}',
@@ -270,19 +55,15 @@
                         'csrfmiddlewaretoken': Cookies.get("csrftoken")
                     },
                     success: function (data) {
-                        if (data.status === 1){
-                            $("#testimonial-"+testimonial_id.toString()).remove();
+                        if (data.status === 1) {
+                            $("#testimonial-" + testimonial_id.toString()).remove();
                             alert(data.message);
-                            location.reload();
-                        }
-                        else{
+                        } else {
                             alert(data.error);
                         }
                     }
                 });
             }
-
         }
-
     </script>
 {% endblock %}

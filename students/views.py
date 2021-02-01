@@ -4,11 +4,11 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, HttpRe
 from django.urls import reverse
 from django.contrib.auth.models import User
 from .models import Testimonial, PollAnswer, PollQuestion, ProfileAnswers, ProfileQuestion, Profile
-from django.db.models.functions import Length
-from PIL import Image
+from django.db.models.functions import Length, Lower
+from PIL import Image, ImageOps
 import os
 import re
-from yearbook.settings import BASE_DIR, MEDIA_ROOT, POLL_STOP, PORTAL_STOP
+from yearbook.settings import BASE_DIR, MEDIA_ROOT, POLL_STOP, PORTAL_STOP, PRODUCTION
 
 # Create your views here.
 
@@ -32,7 +32,7 @@ def home(request):
             logged_in = False
         if logged_in:
             user = User.objects.filter(username=request.user.username).first()
-            poll_questions = PollQuestion.objects.all()
+            poll_questions = PollQuestion.objects.all().order_by("question")
             polls = {}
             if user.is_superuser:
                 for question in poll_questions:
@@ -46,7 +46,6 @@ def home(request):
                             poll_dict[answer.answer] = [answer.voted_by]
                     polls[(question, answers_count)] = sorted(poll_dict.items(), key=votes_sort_key, reverse=True)
                 context = {
-                    'polls': polls,
                     'user': user,
                     'logged_in': logged_in
                 }
@@ -59,9 +58,21 @@ def home(request):
                         'user_profile': user_profile,
                         'logged_in': logged_in
                     }
-                    return render(request, 'home.html', context)
+                    return render(request, 'polls.html', context)
                 else:
                     testimonials = Testimonial.objects.filter(given_to=user_profile).order_by('-id')
+                    #                    for question in poll_questions:
+                    #                        answers = PollAnswer.objects.filter(question=question)
+                    #                        myanswer = answers.filter(voted_by=user_profile).first()
+                    #                        if myanswer:
+                    #                            myanswer = myanswer.answer
+                    #                        else:
+                    #                            myanswer = None
+                    #                        poll_nominees = []
+                    #                        for answer in answers:
+                    #                            if answer.answer not in poll_nominees:
+                    #                                poll_nominees.append(answer.answer)
+                    #                        polls[(question, myanswer)] = sorted(poll_nominees, key=nominees_sort_key)
                     context = {
                         'testimonials': testimonials,
                         'user': user,
@@ -90,7 +101,6 @@ def profile(request, username):
                 else:
                     myprofile = False
                 profile = Profile.objects.filter(user=profile_user).first()
-
                 if not profile.graduating:
                     context = {
                         'logged_in': True,
@@ -100,47 +110,25 @@ def profile(request, username):
                     }
                     return render(request, 'profile.html', context)
                 else:
-                    if myprofile:
-                        testimonials = Testimonial.objects.filter(given_to=profile).order_by('-favourite',
-                                                                                             Length('content').desc(),
-                                                                                             '-id')
-                        profile_questions = ProfileQuestion.objects.all()
-                        profile_answers = ProfileAnswers.objects.filter(profile=profile)
-                        answers = {}
-                        for question in profile_questions:
-                            answers[question] = profile_answers.filter(question=question).first()
-                        context = {
-                            'logged_in': True,
-                            'myprofile': myprofile,
-                            'user': user,
-                            'testimonials': testimonials,
-                            'profile': profile,
-                            'answers': answers
-                        }
-                        return render(request, 'profile.html', context)
-                    else:
-                            testimonials = Testimonial.objects.filter(given_to=profile).order_by('-favourite',
-                                                                                                 Length(
-                                                                                                     'content').desc(),
-                                                                                                 '-id')
-                            profile_questions = ProfileQuestion.objects.all()
-                            profile_answers = ProfileAnswers.objects.filter(profile=profile)
-                            mytestimonial = testimonials.filter(given_by=user_profile).first()
-                            answers = {}
-                            for question in profile_questions:
-                                answers[question] = profile_answers.filter(question=question).first()
-                            context = {
-                                'logged_in': True,
-                                'myprofile': myprofile,
-                                'user': user,
-
-                                'testimonials': testimonials,
-                                'mytestimonial': mytestimonial,
-                                'profile': profile,
-                                'answers': answers
-                            }
-                            return render(request, 'profile.html', context)
-
+                    testimonials = Testimonial.objects.filter(given_to=profile).order_by('-favourite',
+                                                                                         Length('content').desc(),
+                                                                                         '-id')
+                    profile_questions = ProfileQuestion.objects.all()
+                    profile_answers = ProfileAnswers.objects.filter(profile=profile)
+                    mytestimonial = testimonials.filter(given_by=user_profile).first()
+                    answers = {}
+                    for question in profile_questions:
+                        answers[question] = profile_answers.filter(question=question).first()
+                    context = {
+                        'logged_in': True,
+                        'myprofile': myprofile,
+                        'user': user,
+                        'testimonials': testimonials,
+                        'mytestimonial': mytestimonial,
+                        'profile': profile,
+                        'answers': answers
+                    }
+                    return render(request, 'profile.html', context)
             else:
                 return error404(request)
         else:
@@ -232,13 +220,15 @@ def login(request):
             context = {
                 'logged_in': True,
                 'user': user,
+                'production': PRODUCTION
             }
             return render(request, 'login.html', context)
         else:
-            next = request.GET.get('next', "/")
+            next = request.GET.get('next', "/yearbook")
             context = {
                 'logged_in': False,
-                'next': next
+                'next': next,
+                'production': PRODUCTION
             }
             return render(request, 'login.html', context)
     else:
@@ -266,30 +256,18 @@ def edit_profile(request):
             user = User.objects.filter(username=request.user.username).first()
             profile = Profile.objects.filter(user=user).first()
             new_name = request.POST.get("name", "")
-            errors = [0, 0, 0, 0]
+            errors = [0, 0]
             if user.is_superuser:
                 return error404(request)
             if len(new_name) < 50 and new_name != "":
                 profile.full_name = new_name
             else:
                 errors[0] = 1
-            new_phone = request.POST.get("phone", "")
-            if new_phone.isnumeric() and len(new_phone) >= 10:
-                profile.phone = new_phone
-            else:
-                errors[1] = 1
-            new_alt_mail = request.POST.get("email", "")
-
-            regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
-            if (re.search(regex, new_alt_mail)):
-                profile.alt_email = new_alt_mail
-            else:
-                errors[2] = 1
             new_bio = request.POST.get("bio", "")
-            if len(new_bio) < 500:
+            if len(new_bio) <= 500:
                 profile.bio = new_bio
             else:
-                errors[3] = 1
+                errors[1] = 1
             profile.save()
             context = {
                 'updated': True,
@@ -297,9 +275,8 @@ def edit_profile(request):
                 'errors': errors,
                 'logged_in': True
             }
-            if errors[0] + errors[1] + errors[2] + errors[3] == 0:
-                # return redirect('/'+profile.user.username+'/')
-                return HttpResponseRedirect(('/' + profile.user.username + '/'))
+            if errors[0] + errors[1] == 0:
+                return render(request, 'editprofile.html', context)
             else:
                 context['updated'] = False
                 return render(request, 'editprofile.html', context)
@@ -343,13 +320,13 @@ def upload_profile_pic(request):
             try:
                 uploaded_pic = request.FILES["profile_pic"]
                 image = Image.open(uploaded_pic)
+                image = ImageOps.exif_transpose(image)
                 cropped_image = image.crop((x, y, width + x, height + y))
                 resized_image = cropped_image.resize((500, 500), Image.ANTIALIAS)
             except:
                 return JsonResponse({'status': 0,
                                      'error': "Error processing image\nPlease provide an image which is larger than 500x500\nUse JPEG or PNG format"})
             extension = uploaded_pic.name.split('.')[-1]
-            print(extension)
             profile_pic_path = os.path.join(profile_pic_upload_folder, user.username + '.' + extension.lower())
             resized_image.save(profile_pic_path)
             profile.profile_pic = os.path.join(Profile.profile_pic.field.upload_to,
@@ -379,7 +356,7 @@ def add_testimonial(request, username):
                     return JsonResponse(
                         {'status': 0, 'error': "You can't write a testimonial for non-graduating batch"})
                 content = request.POST.get("content", "")
-                if len(content) < 500 and content != "":
+                if len(content) <= 500 and content != "":
                     old_testimonial = Testimonial.objects.filter(given_to=given_to_profile,
                                                                  given_by=given_by_profile).first()
                     if old_testimonial:
@@ -391,7 +368,8 @@ def add_testimonial(request, username):
                                                    content=content)
                         return JsonResponse({'status': 1, 'message': "added"})
                 else:
-                    return JsonResponse({'status': 0, 'error': "Testimonial content size out of bounds"})
+                    return JsonResponse({'status': 0, 'error': "Testimonial size is " + str(
+                        len(content)) + " characters, while maximum size allowed is 500 characters."})
             else:
                 return JsonResponse({'status': 0, 'error': "User doesn't exist"})
         else:
@@ -472,7 +450,7 @@ def change_answer(request, username):
                 new_answer = request.POST.get("answer", -1)
                 if new_answer == -1:
                     return JsonResponse({'status': 0, 'error': "Answer size out of bounds"})
-                if len(new_answer) < 500:
+                if len(new_answer) <= 500:
                     question = ProfileQuestion.objects.filter(id=int(question_id)).first()
                     if question:
                         answer = ProfileAnswers.objects.filter(question=question, profile=profile).first()
@@ -486,7 +464,8 @@ def change_answer(request, username):
                     else:
                         return JsonResponse({'status': 0, 'error': "Question doesn't exist"})
                 else:
-                    return JsonResponse({'status': 0, 'error': "Answer size out of bounds"})
+                    return JsonResponse({'status': 0, 'error': "Answer size is " + str(
+                        len(new_answer)) + " characters, while maximum size allowed is 500 characters."})
             else:
                 return JsonResponse({'status': 0, 'error': "You are not authorised to change this"})
         else:
@@ -506,6 +485,7 @@ def add_vote(request):
             vote_username = request.POST.get('voting_to', "")
             vote_user = User.objects.filter(username=vote_username).first()
             question_id = request.POST.get('question_id', "-1")
+            origin = request.POST.get('origin', "polls")
             if not question_id.isdecimal():
                 return JsonResponse({"status": 0, "error": "Poll doesn't exist"})
             poll_question = PollQuestion.objects.filter(id=int(question_id)).first()
@@ -513,15 +493,17 @@ def add_vote(request):
                 return JsonResponse({"status": 0, "error": "Poll doesn't exist"})
             if not vote_user:
                 return JsonResponse({"status": 0, "error": "Nominated user doesn't exist"})
+            if origin != "home" and origin != "polls":
+                origin = "polls"
             poll_answer = PollAnswer.objects.filter(voted_by=user_profile, question=poll_question).first()
             if poll_answer:
                 poll_answer.answer = Profile.objects.filter(user=vote_user).first()
                 poll_answer.save()
-                return HttpResponseRedirect(reverse('polls'))
+                return HttpResponseRedirect(reverse(origin))
             else:
                 PollAnswer.objects.create(voted_by=user_profile, question=poll_question,
                                           answer=Profile.objects.filter(user=vote_user).first())
-                return HttpResponseRedirect(reverse('polls'))
+                return HttpResponseRedirect(reverse(origin))
         else:
             return JsonResponse({'status': 0, 'error': "Sorry, the polls have been freezed."})
 
@@ -538,6 +520,7 @@ def error404(request):
         return render(request, '404.html')
 
 
+@login_required
 def polls(request):
     if request.method == 'GET':
         if request.user and not request.user.is_anonymous:
@@ -546,7 +529,7 @@ def polls(request):
             logged_in = False
         if logged_in:
             user = User.objects.filter(username=request.user.username).first()
-            poll_questions = PollQuestion.objects.all()
+            poll_questions = PollQuestion.objects.all().order_by("question")
             polls = {}
             if user.is_superuser:
                 for question in poll_questions:
@@ -575,7 +558,6 @@ def polls(request):
                     }
                     return render(request, 'polls.html', context)
                 else:
-                    testimonials = Testimonial.objects.filter(given_to=user_profile).order_by('-id')
                     for question in poll_questions:
                         answers = PollAnswer.objects.filter(question=question)
                         myanswer = answers.filter(voted_by=user_profile).first()
@@ -589,7 +571,6 @@ def polls(request):
                                 poll_nominees.append(answer.answer)
                         polls[(question, myanswer)] = sorted(poll_nominees, key=nominees_sort_key)
                     context = {
-                        'testimonials': testimonials,
                         'polls': polls,
                         'user': user,
                         'user_profile': user_profile,
@@ -602,6 +583,7 @@ def polls(request):
         return error404(request)
 
 
+@login_required
 def write_testimonial(request):
     if request.method == 'GET':
         if request.user and not request.user.is_anonymous:
@@ -610,11 +592,14 @@ def write_testimonial(request):
             logged_in = False
         if logged_in:
             user = User.objects.filter(username=request.user.username).first()
-            profiles = Profile.objects.filter(graduating=True)
+            profiles = Profile.objects.filter(graduating=True).order_by(Lower("full_name"))
+            user_profile = Profile.objects.filter(user=user).first()
+            testimonials = Testimonial.objects.filter(given_by=user_profile).order_by('-id')
             context = {
                 'user': user,
                 'profiles': profiles,
-                'logged_in': logged_in
+                'logged_in': logged_in,
+                'testimonials': testimonials
             }
             return render(request, 'write_testimonial.html', context)
         else:
@@ -631,14 +616,15 @@ def team(request):
             logged_in = False
         if logged_in:
             user = User.objects.filter(username=request.user.username).first()
-            profiles = Profile.objects.filter(graduating=True)
             context = {
                 'user': user,
-                'profiles': profiles,
                 'logged_in': logged_in
             }
             return render(request, 'team.html', context)
         else:
-            return HttpResponseRedirect(reverse('login'))
+            context = {
+                'logged_in': logged_in
+            }
+            return render(request, 'team.html', context)
     else:
         return error404(request)

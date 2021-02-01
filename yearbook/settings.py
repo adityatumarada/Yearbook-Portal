@@ -11,7 +11,9 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 
 import os
-from .keys import SECRET_KEY, SOCIAL_AUTH_AZUREAD_TENANT_OAUTH2_KEY, SOCIAL_AUTH_AZUREAD_TENANT_OAUTH2_SECRET, SOCIAL_AUTH_AZUREAD_TENANT_OAUTH2_TENANT_ID, RDS_DB_NAME, RDS_HOSTNAME, RDS_PASSWORD, RDS_PORT, RDS_USERNAME, POLL_STOP, PORTAL_STOP, PRODUCTION
+from .keys import SECRET_KEY, SOCIAL_AUTH_AZUREAD_TENANT_OAUTH2_KEY, SOCIAL_AUTH_AZUREAD_TENANT_OAUTH2_SECRET, \
+    SOCIAL_AUTH_AZUREAD_TENANT_OAUTH2_TENANT_ID, RDS_DB_NAME, RDS_HOSTNAME, RDS_PASSWORD, RDS_PORT, RDS_USERNAME, \
+    POLL_STOP, PORTAL_STOP, PRODUCTION
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -29,9 +31,8 @@ if PRODUCTION:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
-ALLOWED_HOSTS = ['localhost', 'yearbook.sail-iitg.org']
+ALLOWED_HOSTS = ['localhost', '172.17.1.128', 'www.iitg.ac.in']
 
 # Application definition
 
@@ -141,9 +142,14 @@ SOCIAL_AUTH_PIPELINE = (
 SOCIAL_AUTH_AZUREAD_OAUTH2_RESOURCE = 'https://graph.microsoft.com'
 GET_ALL_EXTRA_DATA = True
 
-LOGIN_URL = '/login/'
-LOGOUT_REDIRECT_URL = '/'
-LOGIN_REDIRECT_URL = '/'
+if PRODUCTION:
+    LOGIN_URL = '/yearbook/login/'
+    LOGOUT_REDIRECT_URL = '/yearbook'
+    SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/yearbook'
+else:
+    LOGIN_URL = '/login/'
+    LOGOUT_REDIRECT_URL = '/'
+    SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/'
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.1/topics/i18n/
@@ -161,7 +167,16 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
-STATIC_URL = '/static/'
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+if PRODUCTION:
+    STATIC_URL = '/yearbook/static/'
+    MEDIA_URL = '/yearbook/media/'
+else:
+    STATIC_URL = '/static/'
+    MEDIA_URL = '/media/'
+
+if PRODUCTION:
+    MEDIA_ROOT = os.path.join('/var/www/yearbook/', 'media')
+    STATIC_ROOT = os.path.join('/var/www/yearbook/', 'static')
+else:
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
