@@ -16,7 +16,7 @@
     {% block extrastyles %}{% endblock %}
 
     <!-- jQuery JS -->
-    <script src="{% static "js/jquery-3.4.1.min.js" %}"></script>
+    <script src="{% static 'js/jquery-3.4.1.min.js' %}"></script>
     <!-- JavaScript Cookie JS -->
     <script src="{% static 'js/js.cookie-2.2.1.min.js' %}"></script>
     <!-- Bootstrap JS -->
@@ -121,6 +121,8 @@
                 <a class="d-inline-block pl-0" style="color:white;" href="{% url 'team' %}"> Developed by Coding Club <img height="40" src="{% static 'img/cc_logo.png' %}"> and SAIL <img height="40" src="{% static 'img/sail_logo.png' %}"></a></span>
         </div>
     </footer>
+    <!-- Disable Emoji -->
+    <script src="{% static 'js/disable_emoji.js' %}"></script>
     {% block extrascripts %}{% endblock %}
 </body>
 </html>
