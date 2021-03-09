@@ -225,6 +225,9 @@
 
         }
         function addTestimonial() {
+        var cont=$("#add-testimonial-form-content").val();
+        cont=removeEmojis(cont);
+        $("#add-testimonial-form-content").val(cont);
             $.ajax({
                 type: "POST",
                 url: '{% url 'add_testimonial' profile.user.username %}',
