@@ -356,7 +356,7 @@ def add_testimonial(request, username):
                     return JsonResponse(
                         {'status': 0, 'error': "You can't write a testimonial for non-graduating batch"})
                 content = request.POST.get("content", "")
-                if len(content) <= 500 and content != "":
+                if len(content) <= 300 and content != "":
                     old_testimonial = Testimonial.objects.filter(given_to=given_to_profile,
                                                                  given_by=given_by_profile).first()
                     if old_testimonial:
@@ -418,12 +418,12 @@ def favourite_testimonial(request):
                         testimonial.save()
                         return JsonResponse({'status': 1, 'message': "Testimonial removed from favourites"})
                     else:
-                        if Testimonial.objects.filter(given_to=user_profile, favourite=True).count() < 4:
+                        if Testimonial.objects.filter(given_to=user_profile, favourite=True).count() < 3:
                             testimonial.favourite = True
                             testimonial.save()
                             return JsonResponse({'status': 1, 'message': "Testimonial added to favourites"})
                         else:
-                            return JsonResponse({'status': 0, 'error': "You can have only 4 favourite testimonials"})
+                            return JsonResponse({'status': 0, 'error': "You can have only 3 favourite testimonials"})
                 else:
                     return JsonResponse({'status': 0, 'error': "You are not authorised to favourite this testimonial"})
             else:
@@ -450,7 +450,7 @@ def change_answer(request, username):
                 new_answer = request.POST.get("answer", -1)
                 if new_answer == -1:
                     return JsonResponse({'status': 0, 'error': "Answer size out of bounds"})
-                if len(new_answer) <= 500:
+                if len(new_answer) <= 300:
                     question = ProfileQuestion.objects.filter(id=int(question_id)).first()
                     if question:
                         answer = ProfileAnswers.objects.filter(question=question, profile=profile).first()

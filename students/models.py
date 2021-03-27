@@ -70,7 +70,7 @@ class Profile(models.Model):
     rollno = models.IntegerField()
     program = models.CharField(max_length=2, choices=program_values)
     department = models.CharField(max_length=3, choices=department_values)
-    bio = models.TextField(max_length=1000)
+    bio = models.TextField(max_length=500)
     graduating = models.BooleanField(default=False)
 
     def __str__(self):
@@ -80,7 +80,7 @@ class Profile(models.Model):
 class Testimonial(models.Model):
     favourite = models.BooleanField(default=False)
     given_by = models.ForeignKey(Profile, null=True, on_delete=models.CASCADE, related_name='given_by')
-    content = models.TextField(max_length = 1000)
+    content = models.TextField(max_length = 300)
     given_to = models.ForeignKey(Profile, null=True, on_delete=models.CASCADE, related_name='given_to')
 
     def __str__(self):
@@ -116,7 +116,7 @@ class ProfileQuestion (models.Model):
 class ProfileAnswers (models.Model):
     profile = models.ForeignKey(Profile, null=True, on_delete=models.CASCADE)
     question = models.ForeignKey(ProfileQuestion, null=True, on_delete=models.SET_NULL)
-    answer = models.TextField(max_length = 1000)
+    answer = models.TextField(max_length = 300)
 
     def __str__(self):
         if self.question:
